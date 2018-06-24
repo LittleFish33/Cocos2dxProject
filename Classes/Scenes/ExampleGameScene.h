@@ -16,7 +16,7 @@
 
 #include "cocos2d.h"
 #include "SelectRoleScene.h"
-#include "Players/ExamplePlayerSprite.h"
+#include "Players\PlayerSprite.h"
 
 class ExampleGameScene : public cocos2d::Layer
 {
@@ -40,13 +40,33 @@ public:
 
 	void update(float delay);
 
-	/* 更新玩家的状态 */
-	void updatePlayer1Status();
-	void updatePlayer2Status();
+	/*测试函数*/
+	void hitTest(Ref* sender);
+	void deadTest(Ref* sender);
 
 	void hit(float dt);
 	void gameOver(float delay);
-    
+
+	void RightKeyPressed();
+	void RightKeyPressed(float t);
+	void LeftKeyPressed();
+	void LeftKeyPressed(float t);
+	void A_KeyPressed();
+	void A_KeyPressed(float t);
+	void D_KeyPressed();
+	void D_KeyPressed(float t);
+
+	void hittedCounter(float t);
+	/*生成大招球*/
+	void createUltimateBall(PlayerSprite* player);
+    /*生成远程攻击球*/
+	void createRangedBall(PlayerSprite* player);
+	/*生成蓄力效果*/
+	Sprite* createChargeEffect(PlayerSprite* player);
+	/*生成被击打效果*/
+	void createHitEffect(PlayerSprite* player);
+
+
 	/* implement the "static create()" method manually */
     CREATE_FUNC(ExampleGameScene);
 
@@ -54,11 +74,17 @@ private:
 	PhysicsWorld * m_world;
 	Size visibleSize;
 	/* 地面和玩家 */
-	Sprite* ground,*player2;
-	ExamplePlayerSprite* player1;
+	Sprite* ground;
+	PlayerSprite* player1, *player2;
 	cocos2d::ProgressTimer* pT;
-	
-
+	Sprite* chargeEffect1;
+	Sprite* chargeEffect2;
+	/*双击键盘的判定变量*/
+	bool firstPressR = true, firstPressL = true, RightKeyState = false, LeftKeyState = false;
+	bool firstPressA = true, firstPressD = true, A_KeyState = false, D_KeyState = false;
+	/*攻击炮的列表*/
+	std::list<Sprite*> ultimateBalls;
+	std::list<Sprite*> rangedBalls;
 };
 
 #endif /* __GameScene_SCENE_H__ */
