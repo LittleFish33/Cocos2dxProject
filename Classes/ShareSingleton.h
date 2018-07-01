@@ -22,6 +22,10 @@ public:
 		return &Instance;
 	}
 	bool opponentFlipx = false;
+	
+	/*代表选择地图序号*/
+	int selectedBackground = 1;
+
 };
 
 #endif

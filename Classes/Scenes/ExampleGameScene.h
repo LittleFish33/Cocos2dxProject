@@ -72,6 +72,10 @@ public:
 	Sprite* createChargeEffect(PlayerSprite* player);
 	/*生成被击打效果*/
 	void createHitEffect(PlayerSprite* player);
+	/* 设置背景音乐打开或者关闭 */
+	void VoicePauseSelectedCallback(Ref * pSender);
+	/*设置游戏暂停*/
+	void playOrPauseCallback(Object * pSender);
 
 
 	/* implement the "static create()" method manually */
@@ -98,6 +102,13 @@ private:
 
 	__int64 player1LastHit, player2LastHit;
 	ShareSingleton* shareInstance = ShareSingleton::GetInstance();
+
+	/*为真，正在播放*/
+	int voiceState;
+	MenuItemImage* voiceItem;
+	/*为真 正在游戏，为假暂停*/
+	int playOrPauseState;
+	MenuItemImage* playOrPauseItem;
 };
 
 #endif /* __GameScene_SCENE_H__ */

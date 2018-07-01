@@ -207,6 +207,7 @@ void PlayerSprite::moveLeft()
 	if (isRun) {
 		return;
 	}
+	isMove = true;
 	auto animation = Animation::createWithSpriteFrames(runVector, 0.09f);
 	auto animate = Animate::create(animation);
 	auto MoveAnimate = RepeatForever::create(animate);
@@ -229,6 +230,7 @@ void PlayerSprite::moveRight()
 	if (isRun) {
 		return;
 	}
+	isMove = true;
 	auto animation = Animation::createWithSpriteFrames(runVector, 0.09f);
 	auto animate = Animate::create(animation);
 	auto MoveAnimate = RepeatForever::create(animate);
@@ -447,6 +449,7 @@ void PlayerSprite::dashLeft(Vec2 oppoentPosition)
 	if (isRun) {
 		return;
 	}
+	isMove = true;
 	setFlippedX(false);
 	physicPlayer->getPhysicsBody()->setVelocity(Vec2(-800,0));
 	auto animation = Animation::createWithSpriteFrames(dashVector, 0.09f, 0);
@@ -462,6 +465,7 @@ void PlayerSprite::dashRight(Vec2 oppoentPosition)
 	if (isRun) {
 		return;
 	}
+	isMove = true;
 	setFlippedX(true);
 	physicPlayer->getPhysicsBody()->setVelocity(Vec2(800, 0));
 	auto animation = Animation::createWithSpriteFrames(dashVector, 0.09f, 0);
@@ -553,7 +557,7 @@ void PlayerSprite::defend() {
 
 /* –Ó¡¶ */
 void PlayerSprite::charge() {
-	if (isRun) {
+	if (getActionByTag(0) == NULL) {
 		return;
 	}
 	auto end = CallFuncN::create([&](Ref* sender) {
