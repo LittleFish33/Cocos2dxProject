@@ -97,9 +97,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = OnlineGameScene::createScene();
-	//auto scene = SocketServerScene::createScene();
-	//auto scene = ExampleGameScene::createScene();
+    // auto scene = OnlineGameScene::createScene();
+	auto scene = SocketServerScene::createScene();
 	
     // run
     director->runWithScene(scene);

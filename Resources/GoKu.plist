@@ -11,11 +11,11 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{85,114}</string>
+                <string>{119,121}</string>
                 <key>spriteSourceSize</key>
-                <string>{85,114}</string>
+                <string>{119,121}</string>
                 <key>textureRect</key>
-                <string>{{1339,120},{85,114}}</string>
+                <string>{{400,387},{119,121}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -26,13 +26,13 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{143,117}</string>
+                <string>{99,115}</string>
                 <key>spriteSourceSize</key>
-                <string>{143,117}</string>
+                <string>{99,115}</string>
                 <key>textureRect</key>
-                <string>{{388,147},{143,117}}</string>
+                <string>{{1180,72},{99,115}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_attack_03.png</key>
             <dict>
@@ -41,11 +41,11 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{130,114}</string>
+                <string>{137,108}</string>
                 <key>spriteSourceSize</key>
-                <string>{130,114}</string>
+                <string>{137,108}</string>
                 <key>textureRect</key>
-                <string>{{805,134},{130,114}}</string>
+                <string>{{214,310},{137,108}}</string>
                 <key>textureRotated</key>
                 <true/>
             </dict>
@@ -56,11 +56,11 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{98,101}</string>
+                <string>{136,104}</string>
                 <key>spriteSourceSize</key>
-                <string>{98,101}</string>
+                <string>{136,104}</string>
                 <key>textureRect</key>
-                <string>{{1709,1},{98,101}}</string>
+                <string>{{425,140},{136,104}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -71,11 +71,11 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{81,131}</string>
+                <string>{127,100}</string>
                 <key>spriteSourceSize</key>
-                <string>{81,131}</string>
+                <string>{127,100}</string>
                 <key>textureRect</key>
-                <string>{{738,274},{81,131}}</string>
+                <string>{{702,305},{127,100}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -86,11 +86,11 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{100,105}</string>
+                <string>{115,103}</string>
                 <key>spriteSourceSize</key>
-                <string>{100,105}</string>
+                <string>{115,103}</string>
                 <key>textureRect</key>
-                <string>{{1639,111},{100,105}}</string>
+                <string>{{771,407},{115,103}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -101,11 +101,11 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{96,91}</string>
+                <string>{79,140}</string>
                 <key>spriteSourceSize</key>
-                <string>{96,91}</string>
+                <string>{79,140}</string>
                 <key>textureRect</key>
-                <string>{{1642,218},{96,91}}</string>
+                <string>{{1724,1},{79,140}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -116,13 +116,13 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{99,136}</string>
+                <string>{77,133}</string>
                 <key>spriteSourceSize</key>
-                <string>{99,136}</string>
+                <string>{77,133}</string>
                 <key>textureRect</key>
-                <string>{{682,1},{99,136}}</string>
+                <string>{{1384,47},{77,133}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_attack_09.png</key>
             <dict>
@@ -131,13 +131,13 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{72,112}</string>
+                <string>{151,98}</string>
                 <key>spriteSourceSize</key>
-                <string>{72,112}</string>
+                <string>{151,98}</string>
                 <key>textureRect</key>
-                <string>{{1331,357},{72,112}}</string>
+                <string>{{97,163},{151,98}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_attack_10.png</key>
             <dict>
@@ -146,13 +146,13 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{93,141}</string>
+                <string>{151,98}</string>
                 <key>spriteSourceSize</key>
-                <string>{93,141}</string>
+                <string>{151,98}</string>
                 <key>textureRect</key>
-                <string>{{507,145},{93,141}}</string>
+                <string>{{197,157},{151,98}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_attack_11.png</key>
             <dict>
@@ -161,13 +161,13 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{94,138}</string>
+                <string>{134,106}</string>
                 <key>spriteSourceSize</key>
-                <string>{94,138}</string>
+                <string>{134,106}</string>
                 <key>textureRect</key>
-                <string>{{586,1},{94,138}}</string>
+                <string>{{324,251},{134,106}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_attack_12.png</key>
             <dict>
@@ -176,58 +176,13 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{133,141}</string>
+                <string>{95,121}</string>
                 <key>spriteSourceSize</key>
-                <string>{133,141}</string>
+                <string>{95,121}</string>
                 <key>textureRect</key>
-                <string>{{388,292},{133,141}}</string>
-                <key>textureRotated</key>
-                <false/>
-            </dict>
-            <key>Goku_attack_13.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{0,0}</string>
-                <key>spriteSize</key>
-                <string>{142,135}</string>
-                <key>spriteSourceSize</key>
-                <string>{142,135}</string>
-                <key>textureRect</key>
-                <string>{{449,1},{142,135}}</string>
+                <string>{{1510,148},{95,121}}</string>
                 <key>textureRotated</key>
                 <true/>
-            </dict>
-            <key>Goku_attack_14.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{0,0}</string>
-                <key>spriteSize</key>
-                <string>{97,126}</string>
-                <key>spriteSourceSize</key>
-                <string>{97,126}</string>
-                <key>textureRect</key>
-                <string>{{1056,1},{97,126}}</string>
-                <key>textureRotated</key>
-                <false/>
-            </dict>
-            <key>Goku_attack_15.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{0,0}</string>
-                <key>spriteSize</key>
-                <string>{89,126}</string>
-                <key>spriteSourceSize</key>
-                <string>{89,126}</string>
-                <key>textureRect</key>
-                <string>{{1024,259},{89,126}}</string>
-                <key>textureRotated</key>
-                <false/>
             </dict>
             <key>Goku_charge_01.png</key>
             <dict>
@@ -240,7 +195,7 @@
                 <key>spriteSourceSize</key>
                 <string>{89,150}</string>
                 <key>textureRect</key>
-                <string>{{875,1},{81,130}}</string>
+                <string>{{521,371},{81,130}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -255,9 +210,9 @@
                 <key>spriteSourceSize</key>
                 <string>{115,150}</string>
                 <key>textureRect</key>
-                <string>{{1240,386},{89,120}}</string>
+                <string>{{1380,221},{89,120}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_charge_03.png</key>
             <dict>
@@ -270,7 +225,7 @@
                 <key>spriteSourceSize</key>
                 <string>{101,150}</string>
                 <key>textureRect</key>
-                <string>{{388,435},{75,138}}</string>
+                <string>{{563,183},{75,138}}</string>
                 <key>textureRotated</key>
                 <true/>
             </dict>
@@ -285,9 +240,9 @@
                 <key>spriteSourceSize</key>
                 <string>{102,150}</string>
                 <key>textureRect</key>
-                <string>{{292,309},{94,150}}</string>
+                <string>{{588,1},{94,150}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_defend_01.png</key>
             <dict>
@@ -300,7 +255,7 @@
                 <key>spriteSourceSize</key>
                 <string>{72,97}</string>
                 <key>textureRect</key>
-                <string>{{1809,102},{72,97}}</string>
+                <string>{{1623,274},{72,97}}</string>
                 <key>textureRotated</key>
                 <true/>
             </dict>
@@ -315,9 +270,9 @@
                 <key>spriteSourceSize</key>
                 <string>{90,131}</string>
                 <key>textureRect</key>
-                <string>{{783,1},{90,131}}</string>
+                <string>{{1519,56},{90,131}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_die_02.png</key>
             <dict>
@@ -330,7 +285,7 @@
                 <key>spriteSourceSize</key>
                 <string>{117,136}</string>
                 <key>textureRect</key>
-                <string>{{1305,1},{117,82}}</string>
+                <string>{{1721,143},{117,82}}</string>
                 <key>textureRotated</key>
                 <true/>
             </dict>
@@ -345,9 +300,9 @@
                 <key>spriteSourceSize</key>
                 <string>{138,103}</string>
                 <key>textureRect</key>
-                <string>{{523,288},{138,65}}</string>
+                <string>{{740,72},{138,65}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_die_04.png</key>
             <dict>
@@ -360,9 +315,9 @@
                 <key>spriteSourceSize</key>
                 <string>{118,103}</string>
                 <key>textureRect</key>
-                <string>{{1155,1},{118,73}}</string>
+                <string>{{1494,335},{118,73}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_die_05.png</key>
             <dict>
@@ -375,22 +330,22 @@
                 <key>spriteSourceSize</key>
                 <string>{151,103}</string>
                 <key>textureRect</key>
-                <string>{{243,323},{151,47}}</string>
+                <string>{{425,91},{151,47}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_fastMove_01.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-5,-2}</string>
+                <string>{-4,0}</string>
                 <key>spriteSize</key>
-                <string>{106,129}</string>
+                <string>{85,114}</string>
                 <key>spriteSourceSize</key>
-                <string>{116,133}</string>
+                <string>{93,114}</string>
                 <key>textureRect</key>
-                <string>{{821,266},{106,129}}</string>
+                <string>{{1633,158},{85,114}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -399,13 +354,28 @@
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{6,0}</string>
+                <string>{0,-18}</string>
                 <key>spriteSize</key>
-                <string>{104,133}</string>
+                <string>{161,88}</string>
                 <key>spriteSourceSize</key>
-                <string>{116,133}</string>
+                <string>{161,170}</string>
                 <key>textureRect</key>
-                <string>{{699,139},{104,133}}</string>
+                <string>{{425,1},{161,88}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>Goku_fastMove_03.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,43}</string>
+                <key>spriteSize</key>
+                <string>{174,44}</string>
+                <key>spriteSourceSize</key>
+                <string>{174,170}</string>
+                <key>textureRect</key>
+                <string>{{1384,1},{174,44}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -420,9 +390,9 @@
                 <key>spriteSourceSize</key>
                 <string>{95,137}</string>
                 <key>textureRect</key>
-                <string>{{602,141},{95,137}}</string>
+                <string>{{560,260},{95,137}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_hit_02.png</key>
             <dict>
@@ -435,9 +405,9 @@
                 <key>spriteSourceSize</key>
                 <string>{93,127}</string>
                 <key>textureRect</key>
-                <string>{{929,263},{93,127}}</string>
+                <string>{{1381,126},{93,127}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_idle_01.png</key>
             <dict>
@@ -450,9 +420,9 @@
                 <key>spriteSourceSize</key>
                 <string>{105,106}</string>
                 <key>textureRect</key>
-                <string>{{1512,339},{105,106}}</string>
+                <string>{{1270,306},{105,106}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_idle_02.png</key>
             <dict>
@@ -465,7 +435,7 @@
                 <key>spriteSourceSize</key>
                 <string>{106,108}</string>
                 <key>textureRect</key>
-                <string>{{1531,112},{106,108}}</string>
+                <string>{{1067,295},{106,108}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -480,7 +450,7 @@
                 <key>spriteSourceSize</key>
                 <string>{109,109}</string>
                 <key>textureRect</key>
-                <string>{{1490,1},{109,109}}</string>
+                <string>{{1067,184},{109,109}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -495,9 +465,9 @@
                 <key>spriteSourceSize</key>
                 <string>{111,110}</string>
                 <key>textureRect</key>
-                <string>{{1344,236},{111,110}}</string>
+                <string>{{1067,72},{111,110}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_jump_01.png</key>
             <dict>
@@ -510,7 +480,7 @@
                 <key>spriteSourceSize</key>
                 <string>{99,106}</string>
                 <key>textureRect</key>
-                <string>{{1541,222},{99,106}}</string>
+                <string>{{1178,189},{99,106}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -525,9 +495,9 @@
                 <key>spriteSourceSize</key>
                 <string>{69,154}</string>
                 <key>textureRect</key>
-                <string>{{167,1},{69,154}}</string>
+                <string>{{1073,1},{69,154}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_jump_03.png</key>
             <dict>
@@ -540,7 +510,7 @@
                 <key>spriteSourceSize</key>
                 <string>{78,144}</string>
                 <key>textureRect</key>
-                <string>{{369,1},{78,144}}</string>
+                <string>{{134,316},{78,144}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -555,9 +525,9 @@
                 <key>spriteSourceSize</key>
                 <string>{83,109}</string>
                 <key>textureRect</key>
-                <string>{{1456,228},{83,109}}</string>
+                <string>{{835,220},{83,109}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_jump_05.png</key>
             <dict>
@@ -570,7 +540,7 @@
                 <key>spriteSourceSize</key>
                 <string>{74,124}</string>
                 <key>textureRect</key>
-                <string>{{1041,387},{74,124}}</string>
+                <string>{{324,387},{74,124}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -585,7 +555,7 @@
                 <key>spriteSourceSize</key>
                 <string>{60,149}</string>
                 <key>textureRect</key>
-                <string>{{307,1},{60,149}}</string>
+                <string>{{72,345},{60,149}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -600,9 +570,9 @@
                 <key>spriteSourceSize</key>
                 <string>{53,162}</string>
                 <key>textureRect</key>
-                <string>{{97,167},{53,162}}</string>
+                <string>{{1560,1},{53,162}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_jump_08.png</key>
             <dict>
@@ -615,7 +585,7 @@
                 <key>spriteSourceSize</key>
                 <string>{97,99}</string>
                 <key>textureRect</key>
-                <string>{{1809,1},{97,99}}</string>
+                <string>{{968,201},{97,99}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -630,9 +600,9 @@
                 <key>spriteSourceSize</key>
                 <string>{100,67}</string>
                 <key>textureRect</key>
-                <string>{{1740,257},{100,67}}</string>
+                <string>{{1652,56},{100,67}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_knockOff_01.png</key>
             <dict>
@@ -645,9 +615,9 @@
                 <key>spriteSourceSize</key>
                 <string>{92,89}</string>
                 <key>textureRect</key>
-                <string>{{1705,406},{92,89}}</string>
+                <string>{{1711,352},{92,89}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_rangedAttack_01.png</key>
             <dict>
@@ -660,9 +630,9 @@
                 <key>spriteSourceSize</key>
                 <string>{100,115}</string>
                 <key>textureRect</key>
-                <string>{{1242,240},{100,115}}</string>
+                <string>{{831,305},{100,115}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_rangedAttack_02.png</key>
             <dict>
@@ -675,7 +645,7 @@
                 <key>spriteSourceSize</key>
                 <string>{96,128}</string>
                 <key>textureRect</key>
-                <string>{{958,1},{96,128}}</string>
+                <string>{{604,357},{96,128}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -690,9 +660,9 @@
                 <key>spriteSourceSize</key>
                 <string>{125,121}</string>
                 <key>textureRect</key>
-                <string>{{1117,386},{125,121}}</string>
+                <string>{{298,128},{125,121}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_rangedAttack_04.png</key>
             <dict>
@@ -705,7 +675,7 @@
                 <key>spriteSourceSize</key>
                 <string>{125,125}</string>
                 <key>textureRect</key>
-                <string>{{1115,259},{125,125}}</string>
+                <string>{{298,1},{125,125}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -720,9 +690,9 @@
                 <key>spriteSourceSize</key>
                 <string>{126,123}</string>
                 <key>textureRect</key>
-                <string>{{1020,131},{126,123}}</string>
+                <string>{{432,246},{126,123}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_rangedAttack_06.png</key>
             <dict>
@@ -735,9 +705,9 @@
                 <key>spriteSourceSize</key>
                 <string>{102,117}</string>
                 <key>textureRect</key>
-                <string>{{1235,121},{102,117}}</string>
+                <string>{{948,302},{102,117}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_run_01.png</key>
             <dict>
@@ -750,9 +720,9 @@
                 <key>spriteSourceSize</key>
                 <string>{106,108}</string>
                 <key>textureRect</key>
-                <string>{{1601,1},{106,108}}</string>
+                <string>{{1111,405},{106,108}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_run_02.png</key>
             <dict>
@@ -765,9 +735,9 @@
                 <key>spriteSourceSize</key>
                 <string>{105,109}</string>
                 <key>textureRect</key>
-                <string>{{1405,349},{105,109}}</string>
+                <string>{{1000,406},{105,109}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_run_03.png</key>
             <dict>
@@ -780,9 +750,9 @@
                 <key>spriteSourceSize</key>
                 <string>{103,110}</string>
                 <key>textureRect</key>
-                <string>{{1426,116},{103,110}}</string>
+                <string>{{888,407},{103,110}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_run_04.png</key>
             <dict>
@@ -795,7 +765,7 @@
                 <key>spriteSourceSize</key>
                 <string>{99,113}</string>
                 <key>textureRect</key>
-                <string>{{1389,1},{99,113}}</string>
+                <string>{{1279,191},{99,113}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -810,7 +780,7 @@
                 <key>spriteSourceSize</key>
                 <string>{95,114}</string>
                 <key>textureRect</key>
-                <string>{{660,416},{95,114}}</string>
+                <string>{{1378,312},{95,114}}</string>
                 <key>textureRotated</key>
                 <true/>
             </dict>
@@ -825,9 +795,9 @@
                 <key>spriteSourceSize</key>
                 <string>{94,114}</string>
                 <key>textureRect</key>
-                <string>{{845,397},{94,114}}</string>
+                <string>{{1221,413},{94,114}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_ultimate_01.png</key>
             <dict>
@@ -840,9 +810,9 @@
                 <key>spriteSourceSize</key>
                 <string>{67,153}</string>
                 <key>textureRect</key>
-                <string>{{238,1},{67,153}}</string>
+                <string>{{1229,1},{67,153}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_ultimate_02.png</key>
             <dict>
@@ -855,7 +825,7 @@
                 <key>spriteSourceSize</key>
                 <string>{98,160}</string>
                 <key>textureRect</key>
-                <string>{{143,331},{98,160}}</string>
+                <string>{{97,1},{98,160}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -885,9 +855,9 @@
                 <key>spriteSourceSize</key>
                 <string>{69,165}</string>
                 <key>textureRect</key>
-                <string>{{72,345},{69,165}}</string>
+                <string>{{740,1},{69,165}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_ultimate_05.png</key>
             <dict>
@@ -900,9 +870,9 @@
                 <key>spriteSourceSize</key>
                 <string>{68,164}</string>
                 <key>textureRect</key>
-                <string>{{97,1},{68,164}}</string>
+                <string>{{907,1},{68,164}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_ultimate_06.png</key>
             <dict>
@@ -915,9 +885,9 @@
                 <key>spriteSourceSize</key>
                 <string>{79,134}</string>
                 <key>textureRect</key>
-                <string>{{657,280},{79,134}}</string>
+                <string>{{730,139},{79,134}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_ultimate_07.png</key>
             <dict>
@@ -930,7 +900,7 @@
                 <key>spriteSourceSize</key>
                 <string>{104,62}</string>
                 <key>textureRect</key>
-                <string>{{1512,447},{104,62}}</string>
+                <string>{{214,449},{104,62}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -945,7 +915,7 @@
                 <key>spriteSourceSize</key>
                 <string>{104,67}</string>
                 <key>textureRect</key>
-                <string>{{776,407},{104,67}}</string>
+                <string>{{702,407},{104,67}}</string>
                 <key>textureRotated</key>
                 <true/>
             </dict>
@@ -960,7 +930,7 @@
                 <key>spriteSourceSize</key>
                 <string>{100,79}</string>
                 <key>textureRect</key>
-                <string>{{1741,176},{100,79}}</string>
+                <string>{{866,139},{100,79}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -975,7 +945,7 @@
                 <key>spriteSourceSize</key>
                 <string>{98,119}</string>
                 <key>textureRect</key>
-                <string>{{941,392},{98,119}}</string>
+                <string>{{1281,70},{98,119}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -990,9 +960,9 @@
                 <key>spriteSourceSize</key>
                 <string>{138,95}</string>
                 <key>textureRect</key>
-                <string>{{590,288},{138,65}}</string>
+                <string>{{740,72},{138,65}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_up_02.png</key>
             <dict>
@@ -1005,9 +975,9 @@
                 <key>spriteSourceSize</key>
                 <string>{118,95}</string>
                 <key>textureRect</key>
-                <string>{{1230,1},{118,73}}</string>
+                <string>{{1494,335},{118,73}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_up_03.png</key>
             <dict>
@@ -1020,9 +990,9 @@
                 <key>spriteSourceSize</key>
                 <string>{151,95}</string>
                 <key>textureRect</key>
-                <string>{{253,156},{151,47}}</string>
+                <string>{{425,91},{151,47}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_up_04.png</key>
             <dict>
@@ -1035,7 +1005,7 @@
                 <key>spriteSourceSize</key>
                 <string>{130,95}</string>
                 <key>textureRect</key>
-                <string>{{528,428},{130,83}}</string>
+                <string>{{703,220},{130,83}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -1050,9 +1020,9 @@
                 <key>spriteSourceSize</key>
                 <string>{84,95}</string>
                 <key>textureRect</key>
-                <string>{{1619,406},{84,95}}</string>
+                <string>{{1614,348},{84,95}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_up_06.png</key>
             <dict>
@@ -1065,7 +1035,7 @@
                 <key>spriteSourceSize</key>
                 <string>{88,95}</string>
                 <key>textureRect</key>
-                <string>{{1796,407},{88,79}}</string>
+                <string>{{1722,262},{88,79}}</string>
                 <key>textureRotated</key>
                 <true/>
             </dict>
@@ -1080,9 +1050,9 @@
                 <key>spriteSourceSize</key>
                 <string>{93,95}</string>
                 <key>textureRect</key>
-                <string>{{1642,311},{93,95}}</string>
+                <string>{{1175,297},{93,95}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_win_01.png</key>
             <dict>
@@ -1095,7 +1065,7 @@
                 <key>spriteSourceSize</key>
                 <string>{99,154}</string>
                 <key>textureRect</key>
-                <string>{{152,167},{99,154}}</string>
+                <string>{{197,1},{99,154}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -1110,7 +1080,7 @@
                 <key>spriteSourceSize</key>
                 <string>{79,75}</string>
                 <key>textureRect</key>
-                <string>{{1739,326},{79,75}}</string>
+                <string>{{1418,410},{79,75}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -1125,9 +1095,9 @@
                 <key>spriteSourceSize</key>
                 <string>{79,84}</string>
                 <key>textureRect</key>
-                <string>{{1820,326},{79,84}}</string>
+                <string>{{1337,413},{79,84}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>Goku_win_04.png</key>
             <dict>
@@ -1140,9 +1110,9 @@
                 <key>spriteSourceSize</key>
                 <string>{88,119}</string>
                 <key>textureRect</key>
-                <string>{{1145,129},{88,119}}</string>
+                <string>{{1502,245},{88,119}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_win_05.png</key>
             <dict>
@@ -1155,9 +1125,9 @@
                 <key>spriteSourceSize</key>
                 <string>{84,150}</string>
                 <key>textureRect</key>
-                <string>{{302,156},{84,150}}</string>
+                <string>{{578,97},{84,150}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Goku_win_06.png</key>
             <dict>
@@ -1170,7 +1140,7 @@
                 <key>spriteSourceSize</key>
                 <string>{97,128}</string>
                 <key>textureRect</key>
-                <string>{{921,133},{97,128}}</string>
+                <string>{{968,71},{97,128}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -1216,9 +1186,9 @@
             <key>realTextureFileName</key>
             <string>Goku.png</string>
             <key>size</key>
-            <string>{1907,512}</string>
+            <string>{1804,512}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:85d1251f622e7dd51691a1b18f0a50a0:549648e7f09dd0349446459bbd3d308e:57d2438bfd6d5791873f5edd42e1a794$</string>
+            <string>$TexturePacker:SmartUpdate:48e0fef7d1b82a3534a3a14311dc7fad:79df1f83c63f9de4ad96e45ddbd9d837:57d2438bfd6d5791873f5edd42e1a794$</string>
             <key>textureFileName</key>
             <string>Goku.png</string>
         </dict>

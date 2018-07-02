@@ -99,8 +99,6 @@ private:
 	/*攻击炮的列表*/
 	std::list<Sprite*> player1UltimateBalls, player2UltimateBalls;
 	std::list<Sprite*> player1RangedBalls, player2RangedBalls;
-	/* 弗利萨因为他的尾巴太长，有一些麻烦的东西和其他人不同 */
-	bool isFreiza = false;
 
 	__int64 player1LastHit, player2LastHit;
 	ShareSingleton* shareInstance = ShareSingleton::GetInstance();

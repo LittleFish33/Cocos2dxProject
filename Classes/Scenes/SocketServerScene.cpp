@@ -43,6 +43,7 @@ bool SocketServerScene::init()
 	server->startServer(8000);
 	server->onRecv = CC_CALLBACK_2(SocketServerScene::onReceive, this);
 
+
 	schedule(schedule_selector(SocketServerScene::update), 0.05f, kRepeatForever, 0);
 
 #pragma endregion
@@ -58,8 +59,18 @@ void SocketServerScene::update(float dt)
 
 void SocketServerScene::onReceive(const char * data, int count)
 {
-	//SocketData* myData = (SocketData*)data;
-	//CCLOG("%d %d", myData->uid, myData->codeSend);
+	SocketData* myData = (SocketData*)data;
+	if (myData->codeSend == 16) {
+		if (player1) {
+			player1 = !player1;
+			return;
+		}
+		else {
+			myData->codeSend = KEYCODESEND::TRANSFER;
+		}
+		
+	}
+	CCLOG("%d %d", myData->uid, myData->codeSend);
 	server->sendMessage(data, count);
 }
 

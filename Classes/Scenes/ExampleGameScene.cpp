@@ -125,14 +125,12 @@ bool ExampleGameScene::init()
 	player1->setPosition(Vec2(visibleSize.width / 4 * 3, visibleSize.height / 2 - 300));
 	player1->setFlippedX(true);
 	player1->setVisible(true);
-	addChild(player1	, 3);
+	addChild(player1, 3);
 	player1->idle();
 
 	player2 = new PlayerSprite();
 	/* 添加player2的物理刚体 */
-	/* 弗利萨的尾巴问题，所以得换个刚体绑定 */
-	physicPlayer2 = Sprite::create("physicplayerForFrieza.png");
-	//physicPlayer2 = Sprite::create("physicplayer.png");
+	physicPlayer2 = Sprite::create("physicplayer.png");
 	physicPlayer2->setPosition(Vec2(visibleSize.width / 4, visibleSize.height / 2 - 300));
 	auto player2Body = PhysicsBody::createBox(physicPlayer2->getContentSize(), PhysicsMaterial(10000.0f, 0.0f, 0.0f));
 	player2Body->setCategoryBitmask(0xFFFFFFFF);
@@ -144,8 +142,7 @@ bool ExampleGameScene::init()
 	physicPlayer2->setScale(1.2f);
 	addChild(physicPlayer2, 3);
 
-	player2->initSprite("Frieza", physicPlayer2);
-	isFreiza = true;
+	player2->initSprite("Kid_Buu", physicPlayer2);
 	player2->initAnimateFrame();
 	player2->setPosition(Vec2(visibleSize.width / 4, visibleSize.height / 2 - 300));
 	player2->setFlippedX(true);
@@ -637,15 +634,7 @@ void ExampleGameScene::updateHP_MP(float delay)
 /* TODO:这里的对打逻辑存在一点小问题，有时候会出现两个人互打的情况； */
 void ExampleGameScene::hit(float dt)
 {
-	/* 因为弗利萨尾巴太长，所以判定距离的方法得区别开来 */
-	bool flag = false;
-	if (isFreiza) {
-		flag = abs(physicPlayer1->getPositionX() - physicPlayer2->getPositionX()) < physicPlayer1->getContentSize().width + physicPlayer2->getContentSize().width - 50;
-	}
-	else {
-		flag = abs(player1->getPositionX() - player2->getPositionX()) < 100;
-	}
-	if (flag) {
+	if (abs(player1->getPositionX() - player2->getPositionX()) < 100) {
 		bool player1FirstAttack = false,bothIdle = false;
 		if (player1->isHitting && player2->isHitting) {
 			player1FirstAttack = player1LastHit > player2LastHit;

@@ -17,8 +17,6 @@
 #include "SelectRoleScene.h"
 #include "Players\PlayerSprite.h"
 #include "..\ShareSingleton.h"
-#include "..\SocketUtil\SocketClient.h"
-#include "..\SocketUtil\SocketData.h"
 
 
 class OnlineGameScene: public cocos2d::Layer
@@ -79,12 +77,6 @@ public:
 	/*设置游戏暂停*/
 	void playOrPauseCallback(Object * pSender);
 
-	/* 接受来自服务端的数据 */
-	void onReceive(const char* data, int count);
-	/* 断开连接 */
-	void onDisconnect();
-	/* 交换player1和player2 */
-	void transfer();
 
 	/* implement the "static create()" method manually */
     CREATE_FUNC(OnlineGameScene);
@@ -117,13 +109,6 @@ private:
 	/*为真 正在游戏，为假暂停*/
 	int playOrPauseState;
 	MenuItemImage* playOrPauseItem;
-
-	bool isFreiza = false;
-
-
-	/* 客户端 */
-	SocketClient* client;
-	int uid = 0;
 };
 
 #endif /* __GameScene_SCENE_H__ */

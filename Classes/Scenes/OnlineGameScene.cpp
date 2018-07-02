@@ -130,7 +130,7 @@ bool OnlineGameScene::init()
 
 	player2 = new PlayerSprite();
 	/* 添加player2的物理刚体 */
-	physicPlayer2 = Sprite::create("physicplayerForFrieza.png");
+	physicPlayer2 = Sprite::create("physicplayer.png");
 	physicPlayer2->setPosition(Vec2(visibleSize.width / 4, visibleSize.height / 2 - 300));
 	auto player2Body = PhysicsBody::createBox(physicPlayer2->getContentSize(), PhysicsMaterial(10000.0f, 0.0f, 0.0f));
 	player2Body->setCategoryBitmask(0xFFFFFFFF);
@@ -142,8 +142,7 @@ bool OnlineGameScene::init()
 	physicPlayer2->setScale(1.2f);
 	addChild(physicPlayer2, 3);
 
-	player2->initSprite("Frieza", physicPlayer2);
-	isFreiza = true;
+	player2->initSprite("Kid_Buu", physicPlayer2);
 	player2->initAnimateFrame();
 	player2->setPosition(Vec2(visibleSize.width / 4, visibleSize.height / 2 - 300));
 	player2->setFlippedX(true);
@@ -151,6 +150,7 @@ bool OnlineGameScene::init()
 	addChild(player2, 3);
 	player2->idle();
 
+	
 #pragma endregion
 
 #pragma region hp条和mp条
@@ -231,6 +231,7 @@ bool OnlineGameScene::init()
 
 #pragma endregion
 
+
 #pragma region 音乐
 
 	auto audio = SimpleAudioEngine::getInstance();
@@ -247,6 +248,7 @@ bool OnlineGameScene::init()
 	audio->playEffect("music/321.mp3", false, 1.0f, 0.0f, 1.0f);
 
 #pragma endregion
+
 
 #pragma region 游戏界面的菜单项
 
@@ -279,23 +281,6 @@ bool OnlineGameScene::init()
 	addChild(playOrPauseMenu, 0);
 
 #pragma endregion
-
-#pragma region 初始化客户端程序
-
-	client = SocketClient::construct();
-	client->onRecv = CC_CALLBACK_2(OnlineGameScene::onReceive, this);
-	client->onDisconnect = CC_CALLBACK_0(OnlineGameScene::onDisconnect, this);
-	/* 合并代码的时候把下面的ip地址改成127.0.0.1就能本地调试了，为了确定是否成功看一下输出里是否有error */
-	if (!client->connectServer("103.46.128.49", 17047))
-	{
-		CCLOG("%s", "Client connect error");
-	}
-	uid = rand() % 100000; /* 生成一个随机的uid，仅用于代码调试 */
-	SocketData data(uid, KEYCODESEND::FIRSTCONNECT);
-	client->sendMessage((char*)(&data), sizeof(SocketData));
-
-#pragma endregion
-
 
 
 #pragma region 添加监听器
@@ -370,7 +355,7 @@ bool OnlineGameScene::onContactSeparate(PhysicsContact & contact)
 /* 按下键盘 */
 void OnlineGameScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
 {
-	SocketData data(uid, KEYCODESEND::LEFT);
+
 	if (chargeEffect1 != NULL) {
 		chargeEffect1->removeFromParentAndCleanup(true);
 		chargeEffect1 = NULL;
@@ -381,94 +366,65 @@ void OnlineGameScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
 	}
 	switch (code) {
 	case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-		if (event == nullptr) {
-			LeftKeyPressed();
-			LeftKeyState = true;
-		}
+		LeftKeyPressed();
+		LeftKeyState = true;
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-		if (event == nullptr) {
-			RightKeyPressed();
-			RightKeyState = true;
-		}
+		RightKeyPressed();
+		RightKeyState = true;
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
-		if (event == nullptr) {
-			player1->jump();
-		}
+		player1->jump();
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-		if (event == nullptr) {
-			player1->defend();
-		}
+		player1->defend();
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_1:
-		if (event == nullptr) {
-			if (player1->getActionByTag(6) == nullptr) {
-				One_KeyPressed();
-				player1LastHit = time(NULL);
-			}
+		if (player1->getActionByTag(6) == nullptr) {
+			One_KeyPressed();
+			player1LastHit = time(NULL);
 		}
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_2:
-		if (event == nullptr) {
-			createRangedBall(player1, true);
-			player1->rangedAttack();
-		}
+		createRangedBall(player1, true);
+		player1->rangedAttack();
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_3:
-		if (event == nullptr) {
-			createUltimateBall(player1, true);
-			player1->ultimate();
-		}
+		createUltimateBall(player1,true);
+		player1->ultimate();
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_5:
-		if (event == nullptr) {
-			chargeEffect1 = createChargeEffect(player1);
-			player1->charge();
-		}
+		chargeEffect1 = createChargeEffect(player1);
+		player1->charge();
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_A:
 		A_KeyPressed();
 		A_KeyState = true;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_D:
-		data.codeSend = KEYCODESEND::RIGHT;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		D_KeyPressed();
 		D_KeyState = true;
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_W:
 		player2->jump();
-		data.codeSend = KEYCODESEND::UP;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_G:
 		if (player2->getActionByTag(6) == nullptr) {
 			player2LastHit = time(NULL);
 			G_KeyPressed();
 		}
-		data.codeSend = KEYCODESEND::G;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_H:
 		createRangedBall(player2, false);
 		player2->rangedAttack();
-		data.codeSend = KEYCODESEND::H;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_Y:
 		chargeEffect2 = createChargeEffect(player2);
 		player2->charge();
-		data.codeSend = KEYCODESEND::Y;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_J:
 		createUltimateBall(player2, false);
 		player2->ultimate();
-		data.codeSend = KEYCODESEND::J;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		break;
 	default:
 		break;
@@ -478,42 +434,35 @@ void OnlineGameScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
 /* 释放按键 */
 void OnlineGameScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 {
-	SocketData data(uid, KEYCODESEND::UPRELEASE);	
 	switch (code) {
 	case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-		if (event == nullptr) {
-			player1->isMove = false;
-			player1->stopActionByTag(1);
-			if (physicPlayer1->getPhysicsBody()->getVelocity().x < 0) {
-				physicPlayer1->getPhysicsBody()->setVelocity(Vec2(0, 0));
-			}
-			/* 考虑先按1后按2，先松1的情况 */
-			if (player1->getActionByTag(2) == nullptr) {
-				player1->idle();
-			}
-			LeftKeyState = false;
+		player1->isMove = false;
+		player1->stopActionByTag(1);
+		if (physicPlayer1->getPhysicsBody()->getVelocity().x < 0) {
+			physicPlayer1->getPhysicsBody()->setVelocity(Vec2(0, 0));
 		}
+		/* 考虑先按1后按2，先松1的情况 */
+		if (player1->getActionByTag(2) == nullptr) {
+			player1->idle();
+		}
+		LeftKeyState = false;
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-		if (event == nullptr) {
-			player1->isMove = false;
-			player1->stopActionByTag(2);
-			if (physicPlayer1->getPhysicsBody()->getVelocity().x > 0) {
-				physicPlayer1->getPhysicsBody()->setVelocity(Vec2(0, 0));
-			}
-			if (player1->getActionByTag(1) == nullptr) {
-				player1->idle();
-			}
-			RightKeyState = false;
+		player1->isMove = false;
+		player1->stopActionByTag(2);
+		if (physicPlayer1->getPhysicsBody()->getVelocity().x > 0) {
+			physicPlayer1->getPhysicsBody()->setVelocity(Vec2(0, 0));
 		}
+		if (player1->getActionByTag(1) == nullptr) {
+			player1->idle();
+		}
+		RightKeyState = false;
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-		if (event == nullptr) {
-			player1->stopActionByTag(11);
-			player1->idle();
-		}
+		player1->stopActionByTag(11);
+		player1->idle();
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_1:
 		break;
@@ -522,15 +471,13 @@ void OnlineGameScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 	case cocos2d::EventKeyboard::KeyCode::KEY_3:
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_5:
-		if (event == nullptr) {
-			if (player1->getActionByTag(12) != nullptr) {
-				player1->stopActionByTag(12);
-				if (chargeEffect1 != NULL) {
-					chargeEffect1->removeFromParentAndCleanup(true);
-					chargeEffect1 = NULL;
-				}
-				player1->idle();
+		if (player1->getActionByTag(12) != nullptr) {
+			player1->stopActionByTag(12);
+			if (chargeEffect1 != NULL) {
+				chargeEffect1->removeFromParentAndCleanup(true);
+				chargeEffect1 = NULL;
 			}
+			player1->idle();
 		}
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_A:
@@ -544,8 +491,6 @@ void OnlineGameScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 			player2->idle();
 		}
 		A_KeyState = false;
-		data.codeSend = KEYCODESEND::LEFTRELEASE;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_D:
 		player2->isMove = false;
@@ -558,27 +503,16 @@ void OnlineGameScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 			player2->idle();
 		}
 		D_KeyState = false;
-		data.codeSend = KEYCODESEND::RIGHTRELEASE;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_W:
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_G:
-		data.codeSend = KEYCODESEND::G_RELEASE;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_H:
-		data.codeSend = KEYCODESEND::H_RELEASE;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_J:
-		data.codeSend = KEYCODESEND::J_RELEASE;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_Y:
-		data.codeSend = KEYCODESEND::Y_RELEASE;
-		client->sendMessage((char*)(&data), sizeof(SocketData));
 		if (player2->getActionByTag(12) != nullptr) {
 			player2->stopActionByTag(12);
 			if (chargeEffect2 != NULL) {
@@ -700,14 +634,7 @@ void OnlineGameScene::updateHP_MP(float delay)
 /* TODO:这里的对打逻辑存在一点小问题，有时候会出现两个人互打的情况； */
 void OnlineGameScene::hit(float dt)
 {
-	bool flag = false;
-	if (isFreiza) {
-		flag = abs(physicPlayer1->getPositionX() - physicPlayer2->getPositionX()) < physicPlayer1->getContentSize().width + physicPlayer2->getContentSize().width - 50;
-	}
-	else {
-		flag = abs(player1->getPositionX() - player2->getPositionX()) < 100;
-	}
-	if (flag) {
+	if (abs(player1->getPositionX() - player2->getPositionX()) < 100) {
 		bool player1FirstAttack = false,bothIdle = false;
 		if (player1->isHitting && player2->isHitting) {
 			player1FirstAttack = player1LastHit > player2LastHit;
@@ -794,24 +721,24 @@ void OnlineGameScene::hit(float dt)
 /* 点击按钮发生被打状态，仅用于测试代码 */
 void OnlineGameScene::hitTest(Ref* sender)
 {
-	if (!player2->isDouble) {
-		player2->hittedCount = 0;
+	if (!player1->isDouble) {
+		player1->hittedCount = 0;
 		scheduleOnce(schedule_selector(OnlineGameScene::hittedCounter), 2.0f);
-		player2->isDouble = true;
+		player1->isDouble = true;
 	}
 	else {
-		player2->hittedCount++;
+		player1->hittedCount++;
 	}
-	player2->hit();
-	createHitEffect(player2);
+	player1->hit();
+	createHitEffect(player1);
 }
 
 
 /* 点击按钮发生死亡状态，仅用于测试代码 */
 void OnlineGameScene::deadTest(Ref* sender)
 {
-	if(!player2->isDead)
-		player2->dead();
+	if(!player1->isDead)
+		player1->dead();
 }
 
 /* 左键第一次按下时响应 */
@@ -1118,97 +1045,4 @@ void OnlineGameScene::playOrPauseCallback(Object * pSender)
 		playOrPauseState = 1;
 		playOrPauseItem->setNormalImage(Sprite::create("button/play.png"));
 	}
-}
-
-#pragma region 服务端相关代码
-
-/* 接受来自服务端的数据 */
-void OnlineGameScene::onReceive(const char * data, int count)
-{
-	SocketData* revData = (SocketData*)data;
-	if (revData->uid != uid) {
-		switch (revData->codeSend)
-		{
-			/* 这里不知道为什么不能用KEYCODESEND::LEFT，是我记错了？？？所以只能用很难记的数字了 */
-			case 0:
-				onKeyPressed(EventKeyboard::KeyCode::KEY_LEFT_ARROW, nullptr);
-				break;
-			case 1:
-				onKeyPressed(EventKeyboard::KeyCode::KEY_RIGHT_ARROW, nullptr);
-				break;
-			case 2:
-				onKeyPressed(EventKeyboard::KeyCode::KEY_UP_ARROW, nullptr);
-				break;
-			case 3:
-				onKeyPressed(EventKeyboard::KeyCode::KEY_DOWN_ARROW, nullptr);
-				break;
-			case 4:
-				onKeyPressed(EventKeyboard::KeyCode::KEY_1, nullptr);
-				break;
-			case 5:
-				onKeyPressed(EventKeyboard::KeyCode::KEY_2, nullptr);
-				break;
-			case 6:
-				onKeyPressed(EventKeyboard::KeyCode::KEY_5, nullptr);
-				break;
-			case 7:
-				onKeyPressed(EventKeyboard::KeyCode::KEY_3, nullptr);
-				break;
-			case 8:
-				onKeyReleased(EventKeyboard::KeyCode::KEY_LEFT_ARROW, nullptr);
-				break;
-			case 9:
-				onKeyReleased(EventKeyboard::KeyCode::KEY_RIGHT_ARROW, nullptr);
-				break;
-			case 10:
-				onKeyReleased(EventKeyboard::KeyCode::KEY_UP_ARROW, nullptr);
-				break;
-			case 11:
-				onKeyReleased(EventKeyboard::KeyCode::KEY_DOWN_ARROW, nullptr);
-				break;
-			case 12:
-				onKeyReleased(EventKeyboard::KeyCode::KEY_1, nullptr);
-				break;
-			case 13:
-				onKeyReleased(EventKeyboard::KeyCode::KEY_2, nullptr);
-				break;
-			case 14:
-				onKeyReleased(EventKeyboard::KeyCode::KEY_5, nullptr);
-				break;
-			case 15:
-				onKeyReleased(EventKeyboard::KeyCode::KEY_3, nullptr);
-				break;
-			case 17:
-				transfer();
-				break;
-			default:
-				break;
-		}
-	}
-}
-
-/* 断开连接 */
-void OnlineGameScene::onDisconnect()
-{
-	CCLOG("%s", "onDisconnect");
-}
-
-
-#pragma endregion
-
-
-void OnlineGameScene::transfer()
-{
-	PlayerSprite* temp = player1;
-	player1 = player2;
-	player2 = temp;
-	Sprite* temp2 = physicPlayer1;
-	physicPlayer1 = physicPlayer2;
-	physicPlayer2 = temp2;
-	ProgressTimer* temp3 = player1Hp;
-	player1Hp = player2Hp;
-	player2Hp = temp3;
-	temp3 = player1Mp;
-	player1Mp = player2Mp;
-	player2Mp = temp3;
 }
