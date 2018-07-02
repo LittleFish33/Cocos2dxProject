@@ -1,6 +1,8 @@
 #include "SelectBackgroundScene.h"
 #include "SimpleAudioEngine.h"
 #include "ExampleGameScene.h"
+#include "../ShareSingleton.h"
+using namespace CocosDenshion;
 
 Scene* SelectBackgroundScene::createScene()
 {
@@ -32,48 +34,83 @@ bool SelectBackgroundScene::init()
 #pragma region UI界面
 
 	/* Todo：美工人员请将这里的图片替换为你选的素材和按你的需要设置位置 */
+	/*游戏背景*/
+	auto bg = Sprite::create("bg/selectBackgroundSceneBackground.png");
+	bg->setPosition(visibleSize / 2);
+	addChild(bg, 0);
+
 	/* 这里的场景的变量名仅仅是为了基本框架的构建，请在选好场景之后替换这些变量名 */
 	/* 可选场景1 */
 	bgItem1 = MenuItemImage::create(
-		"bg1.jpg",
-		"bg1.jpg",
+		"bg/bg1-small.png",
+		"bg/bg1-small.png",
 		CC_CALLBACK_1(SelectBackgroundScene::bgSelectedCallback, this, 1));
-	bgItem1->setPosition(Vec2(200, 500));
+	bgItem1->setPosition(Vec2(120, 500));
 	/* 可选场景2 */
 	bgItem2 = MenuItemImage::create(
-		"bg2.jpg",
-		"bg2.jpg",
+		"bg/bg2-small.png",
+		"bg/bg2-small.png",
 		CC_CALLBACK_1(SelectBackgroundScene::bgSelectedCallback, this, 2));
-	bgItem2->setPosition(Vec2(700, 500));
+	bgItem2->setPosition(Vec2(380, 500));
 	/* 可选场景3 */
 	bgItem3 = MenuItemImage::create(
-		"bg3.jpg",
-		"bg3.jpg",
+		"bg/bg3-small.png",
+		"bg/bg3-small.png",
 		CC_CALLBACK_1(SelectBackgroundScene::bgSelectedCallback, this, 3));
-	bgItem3->setPosition(Vec2(200, 200));
+	bgItem3->setPosition(Vec2(640, 500));
 	/* 可选场景4 */
 	bgItem4 = MenuItemImage::create(
-		"bg4.jpg",
-		"bg4.jpg",
+		"bg/bg4-small.png",
+		"bg/bg4-small.png",
 		CC_CALLBACK_1(SelectBackgroundScene::bgSelectedCallback, this, 4));
-	bgItem4->setPosition(Vec2(700, 200));
-	
+	bgItem4->setPosition(Vec2(900, 500));
+	/* 可选场景5 */
+	bgItem5 = MenuItemImage::create(
+		"bg/bg5-small.png",
+		"bg/bg5-small.png",
+		CC_CALLBACK_1(SelectBackgroundScene::bgSelectedCallback, this, 5));
+	bgItem5->setPosition(Vec2(120, 300));
+	/* 可选场景6 */
+	bgItem6 = MenuItemImage::create(
+		"bg/bg6-small.png",
+		"bg/bg6-small.png",
+		CC_CALLBACK_1(SelectBackgroundScene::bgSelectedCallback, this, 6));
+	bgItem6->setPosition(Vec2(380, 300));
+	/* 可选场景7 */
+	bgItem7 = MenuItemImage::create(
+		"bg/bg7-small.png",
+		"bg/bg7-small.png",
+		CC_CALLBACK_1(SelectBackgroundScene::bgSelectedCallback, this, 7));
+	bgItem7->setPosition(Vec2(640, 300));
+	/* 可选场景8 */
+	bgItem8 = MenuItemImage::create(
+		"bg/bg8-small.png",
+		"bg/bg8-small.png",
+		CC_CALLBACK_1(SelectBackgroundScene::bgSelectedCallback, this, 8));
+	bgItem8->setPosition(Vec2(900, 300));
+
+
 	/* 确定按钮 */
 	confirmItem = MenuItemImage::create(
-		"confirm.png",
-		"confirm.png",
+		"button/confirm-normal.png",
+		"button/confirm-selected.png",
 		CC_CALLBACK_1(SelectBackgroundScene::startGame, this));
-	confirmItem->setPosition(Vec2(500, 100));
-	
-	auto menu = Menu::create(bgItem1, bgItem2, bgItem3, bgItem4, confirmItem,  NULL);
+	confirmItem->setPosition(Vec2(512, 200));
+
+	/*选择地图字样*/
+	auto chooseBg = Sprite::create("button/ChooseBackground.png");
+	chooseBg->setPosition(Vec2(512, 680));
+	this->addChild(chooseBg, 0);
+
+	auto menu = Menu::create(bgItem1, bgItem2, bgItem3, bgItem4, bgItem5, bgItem6, bgItem7, bgItem8,confirmItem,  NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
 
 	/* 场景边框：选中使显示 */
 	frame = Sprite::create("frame.png");
-	frame->setPosition(Vec2(200, 500)); /* 默认情况下选择场景1 */
+	frame->setPosition(Vec2(120, 495)); /* 默认情况下选择场景1 */
 	frame->setVisible(true); 
-	this->addChild(frame, 0);
+	this->addChild(frame, 1);
 
 #pragma endregion
 
@@ -83,19 +120,41 @@ bool SelectBackgroundScene::init()
 /* 高亮被选择的游戏场景 */
 void SelectBackgroundScene::bgSelectedCallback(Ref* pSender, int option) 
 {
+	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	log("%d option", option);
 	switch (option)
 	{
 		case 1:
-			frame->setPosition(Vec2(200, 500));
+			frame->setPosition(Vec2(120, 495));
+			selectedBackground = 1;
 			break;
 		case 2:
-			frame->setPosition(Vec2(700, 500));
+			frame->setPosition(Vec2(380, 495));
+			selectedBackground = 2;
 			break;
 		case 3:
-			frame->setPosition(Vec2(200, 200));
+			frame->setPosition(Vec2(640, 495));
+			selectedBackground = 3;
 			break;
 		case 4:
-			frame->setPosition(Vec2(700, 200));
+			frame->setPosition(Vec2(900, 495));
+			selectedBackground = 4;
+			break;
+		case 5:
+			frame->setPosition(Vec2(120, 300));
+			selectedBackground = 5;
+			break;
+		case 6:
+			frame->setPosition(Vec2(380, 300));
+			selectedBackground = 6;
+			break;
+		case 7:
+			frame->setPosition(Vec2(640, 300));
+			selectedBackground = 7;
+			break;
+		case 8:
+			frame->setPosition(Vec2(900, 300));
+			selectedBackground = 8;
 			break;
 		default:
 			break;
@@ -106,9 +165,11 @@ void SelectBackgroundScene::bgSelectedCallback(Ref* pSender, int option)
 /* 开始游戏 */
 void SelectBackgroundScene::startGame(Ref * pSender)
 {
-	/* Todo：美工人员请替换这里的转场特效 */
 	float t = 1.2f;
+	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	ShareSingleton::GetInstance()->selectedBackground = this->selectedBackground;
 	auto newScene = ExampleGameScene::createScene();
-	auto replacesense = CCTransitionPageTurn::create(t, newScene, false);
+	auto replacesense = CCTransitionFade::create(t, newScene);
 	Director::sharedDirector()->replaceScene(replacesense);
+
 }
