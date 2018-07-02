@@ -4,6 +4,8 @@
 #include "SelectBackgroundScene.h"
 #include <stdlib.h>
 
+using namespace CocosDenshion;
+
 
 Scene* SelectRoleScene::createScene()
 {
@@ -35,6 +37,11 @@ bool SelectRoleScene::init()
 
 	/* Todo：美工人员请将这里的图片替换为你选的素材和按你的需要设置位置 */
 	/* 这里的角色的变量名仅仅是为了基本框架的构建，请在选好角色之后替换这些变量名 */
+	/*游戏背景*/
+	auto bg = Sprite::create("bg/selectRoleSceneBackground.png");
+	bg->setPosition(visibleSize / 2);
+	addChild(bg, 0);
+	
 	/* 可选角色1 */
 	roleItem1 = MenuItemImage::create(
 		"role1.png",
@@ -62,29 +69,44 @@ bool SelectRoleScene::init()
 	
 	/* 确定按钮 */
 	player1ConfirmItem = MenuItemImage::create(
-		"confirm.png",
-		"confirm.png",
+		"button/confirm-normal.png",
+		"button/confirm-selected.png",
 		CC_CALLBACK_1(SelectRoleScene::confirmCallback, this, '1'));
 	player1ConfirmItem->setPosition(Vec2(150, 100));
 	player1ConfirmItem->setVisible(false);
 
 	player2ConfirmItem = MenuItemImage::create(
-		"confirm.png",
-		"confirm.png",
+		"button/confirm-normal.png",
+		"button/confirm-selected.png",
 		CC_CALLBACK_1(SelectRoleScene::confirmCallback, this, '2'));
 	player2ConfirmItem->setPosition(Vec2(850, 100));
 	player2ConfirmItem->setVisible(false);
 
 	/* 回到主菜单按纽 */
 	backItem = MenuItemImage::create(
-		"back.png",
-		"back.png",
+		"button/back-normal.png",
+		"button/back-selected.png",
 		CC_CALLBACK_1(SelectRoleScene::menuBackCallback, this));
 	backItem->setPosition(Vec2(500, 100));
+
+	/*x选择角色字样*/
+	auto chooseRole = Sprite::create("button/ChooseRole.png");
+	chooseRole->setPosition(Vec2(512, 680));
+	this->addChild(chooseRole, 0);
 
 	auto menu = Menu::create(roleItem1, roleItem2, roleItem3, roleItem4, backItem, player1ConfirmItem, player2ConfirmItem, NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
+
+	/*表明是角色1,2的图片*/
+	auto role1 = Sprite::create("role/role1.png");
+	auto role2 = Sprite::create("role/role2.png");
+	role1->setPosition(Vec2(150, 500));
+	role2->setPosition(Vec2(850, 500));
+	addChild(role1, 1);
+	addChild(role2, 1);
+
+	
 
 	/* 当你选择了一个角色之后，将会显示出该角色的大图在左下角或右下角，在此之前该图片是不可见的 */
 	/* 已选角色1 */
@@ -136,14 +158,17 @@ bool SelectRoleScene::init()
 void SelectRoleScene::menuBackCallback(Ref* pSender)
 {
 	float t = 1.2f;
+	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	auto newScene = WelcomeScene::createScene();
-	auto replacesense = CCTransitionPageTurn::create(t, newScene, false);
+	auto replacesense = CCTransitionFade::create(t, newScene);
 	Director::sharedDirector()->replaceScene(replacesense);
 }
 
 /* 选择角色 */
 void SelectRoleScene::roleSelectedCallback(Ref* pSender, char option)
 {
+	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+
 	if (!player1Selected) { /* 当前是为player1选择角色 */
 		invisibleRolesBig();
 		switch (option) /* 判断选择的是哪一个角色 */
@@ -256,6 +281,7 @@ void SelectRoleScene::invisibleRolesBig()
 void SelectRoleScene::confirmCallback(Ref* pSender, char option)
 {
 	auto particle = ParticleFlower::create();
+	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	switch (option)
 	{
 	case '1':
@@ -274,7 +300,7 @@ void SelectRoleScene::confirmCallback(Ref* pSender, char option)
 	/* 如果play2也已经选择好角色了，那么进入游戏背景选择界面（这里试过了不能放在switch里，所以让case2 直接break） */
 	float t = 1.2f;
 	auto newScene = SelectBackgroundScene::createScene();
-	auto replacesense = CCTransitionPageTurn::create(t, newScene, false);
+	auto replacesense = CCTransitionFade::create(t, newScene);
 	Director::sharedDirector()->replaceScene(replacesense);
 }
 
