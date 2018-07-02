@@ -28,6 +28,9 @@ public:
 
 	void startGameCallback(Ref * pSender);
     
+	void settingGameCallback(Ref* pSender);
+
+	
 	/* implement the "static create()" method manually */
     CREATE_FUNC(WelcomeScene);
 };

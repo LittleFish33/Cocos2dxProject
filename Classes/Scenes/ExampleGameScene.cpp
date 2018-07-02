@@ -1,11 +1,13 @@
 #include "ExampleGameScene.h"
 #include "SimpleAudioEngine.h"
+#include "GamePauseScene.h"
 #include "../configuration.h"
+#include "../ShareSingleton.h"
 #include "../Players/PlayerSprite.h"
+using namespace CocosDenshion;
 #include <iostream>
 #include <cmath>
 #include <ctime>
-
 USING_NS_CC;
 /*
 *  tag    动画
@@ -75,14 +77,14 @@ bool ExampleGameScene::init()
 #pragma endregion
 
 #pragma region 创建场景
-	/* Todo：美工 */
-
-	/* 添加背景图片 */
-	auto bgSprite = Sprite::create("exampleBackground.png");
+	int selectedBg = ShareSingleton::GetInstance()->selectedBackground;
+	char bgName[20];
+	sprintf(bgName, "bg/bg%d.png", selectedBg);
+	auto bgSprite = Sprite::create("bg/bg4.png");
 	bgSprite->setPosition(visibleSize / 2);
 	bgSprite->setScale(visibleSize.width / bgSprite->getContentSize().width, visibleSize.height / bgSprite->getContentSize().height);
 	this->addChild(bgSprite, 0);
-
+	
 	/* 添加地面 */
 	ground = Sprite::create("ground.png");
 	ground->setScale(visibleSize.width / ground->getContentSize().width, 1.2f);
@@ -95,10 +97,11 @@ bool ExampleGameScene::init()
 	groundbody->setTag(1);
 	groundbody->setDynamic(false);
 	ground->setPhysicsBody(groundbody);
+	ground->setVisible(false);
 	this->addChild(ground, 1);
 
 #pragma endregion
-
+	
 #pragma region 创建精灵
 	/* Todo：创建精灵的人需要修改一下这里的初始帧 */
 	/* 创建一张贴图，使用贴图创建精灵 */
@@ -117,17 +120,19 @@ bool ExampleGameScene::init()
 	physicPlayer1->setScale(1.2f);
 	addChild(physicPlayer1, 3);
 
-	player1->initSprite("Kid_Buu", physicPlayer1);
+	player1->initSprite("Goku", physicPlayer1);
 	player1->initAnimateFrame();
 	player1->setPosition(Vec2(visibleSize.width / 4 * 3, visibleSize.height / 2 - 300));
 	player1->setFlippedX(true);
 	player1->setVisible(true);
-	addChild(player1, 3);
+	addChild(player1	, 3);
 	player1->idle();
 
 	player2 = new PlayerSprite();
 	/* 添加player2的物理刚体 */
-	physicPlayer2 = Sprite::create("physicplayer.png");
+	/* 弗利萨的尾巴问题，所以得换个刚体绑定 */
+	physicPlayer2 = Sprite::create("physicplayerForFrieza.png");
+	//physicPlayer2 = Sprite::create("physicplayer.png");
 	physicPlayer2->setPosition(Vec2(visibleSize.width / 4, visibleSize.height / 2 - 300));
 	auto player2Body = PhysicsBody::createBox(physicPlayer2->getContentSize(), PhysicsMaterial(10000.0f, 0.0f, 0.0f));
 	player2Body->setCategoryBitmask(0xFFFFFFFF);
@@ -139,7 +144,8 @@ bool ExampleGameScene::init()
 	physicPlayer2->setScale(1.2f);
 	addChild(physicPlayer2, 3);
 
-	player2->initSprite("Kid_Buu", physicPlayer2);
+	player2->initSprite("Frieza", physicPlayer2);
+	isFreiza = true;
 	player2->initAnimateFrame();
 	player2->setPosition(Vec2(visibleSize.width / 4, visibleSize.height / 2 - 300));
 	player2->setFlippedX(true);
@@ -156,6 +162,9 @@ bool ExampleGameScene::init()
 	/* Player1的Hp */
 	Sprite* player1hpBorder = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(0, 320, 420, 47)));
 	Sprite* player1hpContent = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(610, 362, 4, 16)));
+
+	//Sprite* player1hpBorder = Sprite::create("hp1.png");
+//	Sprite* player1hpContent = Sprite::create("hp2.png");
 
 	player1Hp = ProgressTimer::create(player1hpContent);
 	player1Hp->setScaleX(90);
@@ -199,9 +208,11 @@ bool ExampleGameScene::init()
 	player2Hp->setMidpoint(Point(0, 1));
 	player2Hp->setPercentage(100);
 	player2Hp->setPosition(Vec2(origin.x + 14 * player2Hp->getContentSize().width, origin.y + visibleSize.height - 2 * player2Hp->getContentSize().height));
+	//player2Hp->setPosition(Vec2(100,100));
 	addChild(player2Hp, 1);
 	player2hpBorder->setAnchorPoint(Vec2(0, 0));
 	player2hpBorder->setPosition(Vec2(origin.x + player2Hp->getContentSize().width, origin.y + visibleSize.height - player2hpBorder->getContentSize().height));
+	//player2hpBorder->setPosition(Vec2(300, 300));
 	addChild(player2hpBorder, 0);
 
 	/* Player2的Mp */
@@ -223,17 +234,57 @@ bool ExampleGameScene::init()
 
 #pragma endregion
 
-#pragma region 游戏界面的菜单项
-
-	/* Todo: 美工人员请在这里添加游戏界面的菜单项，如暂停游戏，设置，声音开关 */
-
-#pragma endregion
 
 #pragma region 音乐
 
-	/* Todo: 美工人员请在这里添加音乐的相关代码 */
+	auto audio = SimpleAudioEngine::getInstance();
+	/*预加载并循环播放背景音乐*/
+	//	audio->preloadBackgroundMusic("music/WelcomeSceneBackground.mp3");  
+	audio->playBackgroundMusic("music/MainGameSceneBgm.mp3", true);
+	audio->setBackgroundMusicVolume(0.80);
+
+	/*预加载点击音效*/
+	audio->preloadEffect("music/ClickCamera.wav");
+	audio->setEffectsVolume(0.80);
+
+	/*加载并播放 3 2 1 开始 音乐*/
+	audio->playEffect("music/321.mp3", false, 1.0f, 0.0f, 1.0f);
 
 #pragma endregion
+
+
+#pragma region 游戏界面的菜单项
+
+	/* Todo: 美工人员请在这里添加游戏界面的菜单项，如暂停游戏，设置，声音开关 */
+	/*声音开关,默认打开 voiceState == true*/
+	voiceState = 1;
+	voiceItem = MenuItemImage::create(
+		"button/SoundOn.png",
+		"button/SoundOff.png",
+		CC_CALLBACK_1(ExampleGameScene::VoicePauseSelectedCallback, this)
+	);
+	voiceItem->setPosition(ccp(visibleSize.width - voiceItem->getContentSize().width / 2,
+		visibleSize.height / 2 - voiceItem->getContentSize().height / 2 - 60));
+	auto VoiceMenu = Menu::create(voiceItem, NULL);
+	VoiceMenu->setPosition(Vec2::ZERO);
+	addChild(VoiceMenu, 0);
+
+	/*游戏暂停按钮 */
+	playOrPauseState = 1;
+	playOrPauseItem = MenuItemImage::create(
+			"button/play.png",
+			"button/pause.png",
+			CC_CALLBACK_1(ExampleGameScene::playOrPauseCallback, this)
+		);
+	playOrPauseItem->setPosition(ccp(visibleSize.width - playOrPauseItem->getContentSize().width / 2,
+		visibleSize.height/2 - playOrPauseItem->getContentSize().height / 2));
+	//playOrPauseItem->setPosition(Vec2(480, 70));
+	auto playOrPauseMenu = Menu::create(playOrPauseItem, NULL);
+	playOrPauseMenu->setPosition(Vec2::ZERO);
+	addChild(playOrPauseMenu, 0);
+
+#pragma endregion
+
 
 #pragma region 添加监听器
 
@@ -265,6 +316,7 @@ bool ExampleGameScene::init()
 	auto changeItem = MenuItemLabel::create(label, CC_CALLBACK_1(ExampleGameScene::hitTest, this));
 	auto menu = Menu::create(changeItem, NULL);
 	menu->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	menu->setVisible(false);
 	addChild(menu, 2);
 
 	auto label2 = Label::createWithTTF("dead", "fonts/arial.ttf", 24);
@@ -272,6 +324,7 @@ bool ExampleGameScene::init()
 	auto changeItem2 = MenuItemLabel::create(label2, CC_CALLBACK_1(ExampleGameScene::deadTest, this));
 	auto menu2 = Menu::create(changeItem2, NULL);
 	menu2->setPosition(visibleSize.width / 2 + 50, visibleSize.height / 2);
+	menu2->setVisible(false);
 	addChild(menu2, 2);
 
 #pragma endregion
@@ -305,6 +358,15 @@ bool ExampleGameScene::onContactSeparate(PhysicsContact & contact)
 /* 按下键盘 */
 void ExampleGameScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
 {
+
+	if (chargeEffect1 != NULL) {
+		chargeEffect1->removeFromParentAndCleanup(true);
+		chargeEffect1 = NULL;
+	}
+	if (chargeEffect2 != NULL) {
+		chargeEffect2->removeFromParentAndCleanup(true);
+		chargeEffect2 = NULL;
+	}
 	switch (code) {
 	case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 		LeftKeyPressed();
@@ -377,8 +439,11 @@ void ExampleGameScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 {
 	switch (code) {
 	case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+		player1->isMove = false;
 		player1->stopActionByTag(1);
-		physicPlayer1->getPhysicsBody()->setVelocity(Vec2(0,0));
+		if (physicPlayer1->getPhysicsBody()->getVelocity().x < 0) {
+			physicPlayer1->getPhysicsBody()->setVelocity(Vec2(0, 0));
+		}
 		/* 考虑先按1后按2，先松1的情况 */
 		if (player1->getActionByTag(2) == nullptr) {
 			player1->idle();
@@ -386,8 +451,11 @@ void ExampleGameScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 		LeftKeyState = false;
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+		player1->isMove = false;
 		player1->stopActionByTag(2);
-		physicPlayer1->getPhysicsBody()->setVelocity(Vec2(0, 0));
+		if (physicPlayer1->getPhysicsBody()->getVelocity().x > 0) {
+			physicPlayer1->getPhysicsBody()->setVelocity(Vec2(0, 0));
+		}
 		if (player1->getActionByTag(1) == nullptr) {
 			player1->idle();
 		}
@@ -406,21 +474,34 @@ void ExampleGameScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 	case cocos2d::EventKeyboard::KeyCode::KEY_3:
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_5:
-		player1->stopActionByTag(12);
-		if(chargeEffect1 != NULL) chargeEffect1->removeFromParentAndCleanup(true);
-		player1->idle();
+		if (player1->getActionByTag(12) != nullptr) {
+			player1->stopActionByTag(12);
+			if (chargeEffect1 != NULL) {
+				chargeEffect1->removeFromParentAndCleanup(true);
+				chargeEffect1 = NULL;
+			}
+			player1->idle();
+		}
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_A:
+		player2->isMove = false;
 		player2->stopActionByTag(1);
-		physicPlayer2->getPhysicsBody()->setVelocity(Vec2(0, 0));
+		if (physicPlayer2->getPhysicsBody()->getVelocity().x < 0)
+		{
+			physicPlayer2->getPhysicsBody()->setVelocity(Vec2(0, 0));
+		}
 		if (player2->getActionByTag(2) == nullptr) {
 			player2->idle();
 		}
 		A_KeyState = false;
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_D:
+		player2->isMove = false;
 		player2->stopActionByTag(2);
-		physicPlayer2->getPhysicsBody()->setVelocity(Vec2(0, 0));
+		if (physicPlayer2->getPhysicsBody()->getVelocity().x > 0)
+		{
+			physicPlayer2->getPhysicsBody()->setVelocity(Vec2(0, 0));
+		}
 		if (player2->getActionByTag(1) == nullptr) {
 			player2->idle();
 		}
@@ -435,9 +516,14 @@ void ExampleGameScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 	case cocos2d::EventKeyboard::KeyCode::KEY_J:
 		break;
 	case cocos2d::EventKeyboard::KeyCode::KEY_Y:
-		player2->stopActionByTag(12);
-		if (chargeEffect2 != NULL) chargeEffect2->removeFromParentAndCleanup(true);
-		player2->idle();
+		if (player2->getActionByTag(12) != nullptr) {
+			player2->stopActionByTag(12);
+			if (chargeEffect2 != NULL) {
+				chargeEffect2->removeFromParentAndCleanup(true);
+				chargeEffect2 = NULL;
+			}
+			player2->idle();
+		}
 		break;
 	default:
 		break;
@@ -551,7 +637,15 @@ void ExampleGameScene::updateHP_MP(float delay)
 /* TODO:这里的对打逻辑存在一点小问题，有时候会出现两个人互打的情况； */
 void ExampleGameScene::hit(float dt)
 {
-	if (abs(player1->getPositionX() - player2->getPositionX()) < 100) {
+	/* 因为弗利萨尾巴太长，所以判定距离的方法得区别开来 */
+	bool flag = false;
+	if (isFreiza) {
+		flag = abs(physicPlayer1->getPositionX() - physicPlayer2->getPositionX()) < physicPlayer1->getContentSize().width + physicPlayer2->getContentSize().width - 50;
+	}
+	else {
+		flag = abs(player1->getPositionX() - player2->getPositionX()) < 100;
+	}
+	if (flag) {
 		bool player1FirstAttack = false,bothIdle = false;
 		if (player1->isHitting && player2->isHitting) {
 			player1FirstAttack = player1LastHit > player2LastHit;
@@ -888,7 +982,7 @@ void ExampleGameScene::createRangedBall(PlayerSprite* player,bool isPlayer1) {
 
 /* 生成蓄力效果 */
 Sprite* ExampleGameScene::createChargeEffect(PlayerSprite* player) {
-	if (player->isRun) return NULL;
+	if (player->isRun ||player->isMove ) return NULL;
 	Sprite* effect = Sprite::createWithSpriteFrame(player->chargeEffectVector.front());
 	effect->setScale(2.0f);
 	effect->setPosition(player->getPosition() + Vec2(0, 30));
@@ -911,4 +1005,55 @@ void ExampleGameScene::createHitEffect(PlayerSprite* player) {
 		hitEffect->removeFromParentAndCleanup(true);
 	}),NULL);
 	hitEffect->runAction(seq);
+}
+
+/* 声音暂停 回调*/
+void ExampleGameScene::VoicePauseSelectedCallback(Ref * pSender)
+{
+	/*声音按钮切换以及声音控制*/
+	if (voiceState) {
+		SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+		SimpleAudioEngine::getInstance()->pauseAllEffects();
+		voiceState = 0;
+		voiceItem->setNormalImage(Sprite::create("button/SoundOff.png"));
+	}
+	else {
+		SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+		SimpleAudioEngine::getInstance()->resumeAllEffects();
+		voiceState = 1;
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+		voiceItem->setNormalImage(Sprite::create("button/SoundOn.png"));	
+	}
+}
+
+/*游戏暂停，弹出暂停场景的回调函数*/
+void ExampleGameScene::playOrPauseCallback(Object * pSender)
+{
+	/*得到窗口的大小*/
+	Size visibleSize = Director::sharedDirector()->getVisibleSize();
+	RenderTexture *renderTexture = RenderTexture::create(visibleSize.width, visibleSize.height);
+
+	/*遍历当前类的所有子节点信息，画入renderTexture中。
+	这里类似截图。*/
+	renderTexture->begin();
+	this->getParent()->visit();
+	renderTexture->end();
+
+	/*将游戏界面暂停，压入场景堆栈。并切换到GamePauseScene界面*/
+	Director::sharedDirector()->pushScene(GamePauseScene::CreateScene(renderTexture));
+	
+	log(" to game pause scene");
+
+	/* 播放暂停按钮切换*/
+	if (playOrPauseState) {
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+		playOrPauseState = 0;
+		//Director::getInstance()->set
+		playOrPauseItem->setNormalImage(Sprite::create("button/pause.png"));
+	}
+	else {
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+		playOrPauseState = 1;
+		playOrPauseItem->setNormalImage(Sprite::create("button/play.png"));
+	}
 }
