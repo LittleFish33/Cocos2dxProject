@@ -95,7 +95,7 @@ bool SelectBackgroundScene::init()
 		"confirm-normal.png",
 		"confirm-selected.png",
 		CC_CALLBACK_1(SelectBackgroundScene::startGame, this));
-	confirmItem->setPosition(Vec2(512, 200));
+	confirmItem->setPosition(Vec2(512, 130));
 
 	/*选择地图字样*/
 	auto chooseBg = Sprite::create("button/ChooseBackground.png");
@@ -120,7 +120,8 @@ bool SelectBackgroundScene::init()
 /* 高亮被选择的游戏场景 */
 void SelectBackgroundScene::bgSelectedCallback(Ref* pSender, int option) 
 {
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	log("%d option", option);
 	switch (option)
 	{
@@ -166,7 +167,8 @@ void SelectBackgroundScene::bgSelectedCallback(Ref* pSender, int option)
 void SelectBackgroundScene::startGame(Ref * pSender)
 {
 	float t = 1.2f;
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	ShareSingleton::GetInstance()->selectedBackground = this->selectedBackground;
 	auto newScene = ExampleGameScene::createScene();
 	auto replacesense = CCTransitionFade::create(t, newScene);

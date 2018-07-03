@@ -1,6 +1,7 @@
 #include "GameSettingScene.h"
 #include "SimpleAudioEngine.h"
 #include "SelectRoleScene.h"
+#include "../ShareSingleton.h"
 using namespace CocosDenshion;
 
 cocos2d::Scene * GameSettingScene::createScene()
@@ -116,12 +117,15 @@ bool GameSettingScene::init()
 /*控制背景音乐回调函数，打开或者关闭 */
 void GameSettingScene::controlVoiceCallback(Ref * pSender)
 {
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 
 	auto audio = SimpleAudioEngine::getInstance();
 	/*即将关闭背景音乐*/
 	if (openOrCloseVoiceState) {
+		SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 		SimpleAudioEngine::getInstance()->pauseAllEffects();
+		ShareSingleton::GetInstance()->controlVoice = false;
 		bgmItem->setNormalImage(Sprite::create("setting/openBgm-normal.png"));
 		bgmItem->setSelectedImage(Sprite::create("setting/openBgm-selected.png"));
 		openOrCloseVoiceState = false;
@@ -135,9 +139,9 @@ void GameSettingScene::controlVoiceCallback(Ref * pSender)
 	/*即将打开背景音乐*/
 	else {
 		/*预加载并循环播放背景音乐*/
-		audio->playBackgroundMusic("music/WelcomeSceneBgm.mp3", true);
-		audio->setBackgroundMusicVolume(0.80);
-
+		SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+		SimpleAudioEngine::getInstance()->resumeAllEffects();
+		ShareSingleton::GetInstance()->controlVoice = true;  //修改全局变量，以便页面间声音控制保持一致 
 		bgmItem->setNormalImage(Sprite::create("setting/closeBgm-normal.png"));
 		bgmItem->setSelectedImage(Sprite::create("setting/closeBgm-selected.png"));
 
@@ -153,7 +157,8 @@ void GameSettingScene::controlVoiceCallback(Ref * pSender)
 void GameSettingScene::startGameCallback(Ref * pSender)
 {
 	float t = 0.8f;
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	auto newScene = SelectRoleScene::createScene();
 	auto replacesense = CCTransitionFade::create(t, newScene);
 
@@ -163,7 +168,8 @@ void GameSettingScene::startGameCallback(Ref * pSender)
 /*关于游戏，修改对话框*/
 void GameSettingScene::aboutGameCallback(Ref * pSender)
 {
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	openBgmDialogue->setVisible(false);
 	closeBgmDialogue->setVisible(false);
 	aboutGameDialogue->setVisible(true);

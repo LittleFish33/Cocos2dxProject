@@ -1,6 +1,7 @@
 #include "WelcomeScene.h"
 #include "SimpleAudioEngine.h"
 #include "GameSettingScene.h"
+#include "ShareSingleton.h"
 using namespace CocosDenshion;
 USING_NS_CC;
 
@@ -55,7 +56,8 @@ bool WelcomeScene::init()
 
 	auto audio = SimpleAudioEngine::getInstance();
 	/*Ô¤¼ÓÔØ²¢Ñ­»·²¥·Å±³¾°ÒôÀÖ*/
-	audio->playBackgroundMusic("music/WelcomeSceneBgm.mp3", true);
+	if(ShareSingleton::GetInstance()->controlVoice)
+		audio->playBackgroundMusic("music/WelcomeSceneBgm.mp3", true);
 	audio->setBackgroundMusicVolume(0.80);
 
 	/*Ô¤¼ÓÔØÒôÐ§*/
@@ -110,7 +112,8 @@ bool WelcomeScene::init()
 /* ¹Ø±ÕÓÎÏ· */
 void WelcomeScene::menuCloseCallback(Ref* pSender)
 {
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	Director::getInstance()->end();
 
     #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
@@ -120,7 +123,8 @@ void WelcomeScene::menuCloseCallback(Ref* pSender)
 
 void WelcomeScene::startGameCallback(Ref* pSender)
 {
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	
 	float t = 0.8f;
 	auto newScene = SelectRoleScene::createScene();
@@ -130,7 +134,8 @@ void WelcomeScene::startGameCallback(Ref* pSender)
 
 void WelcomeScene::settingGameCallback(Ref * pSender)
 {
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	
 	float t = 0.8f;
 	auto newScene = GameSettingScene::createScene();

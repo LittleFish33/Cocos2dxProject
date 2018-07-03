@@ -48,7 +48,13 @@ public:
 	void hit(float dt);
 	void gameOver();
 	void isCharge(float dt); /* 是否集气 */
-	void updateHP_MP(float delay);
+	void updateHP_MP(float delay); /*判断 mp hp的变化*/
+
+	/*在游戏结束时，利用一次性监听器，延迟切换*/
+	void CallGameOverScene(float dt);
+
+	/* 倒计时update与倒计时相应函数 */
+	void updateCountDown(float delay);
 
 	void RightKeyPressed();
 	void RightKeyPressed(float t);
@@ -82,6 +88,32 @@ public:
     CREATE_FUNC(ExampleGameScene);
 
 private:
+	/* 倒计时组件 */
+	int totalTime;
+	cocos2d::Label* countDown;
+	Sprite* round1;
+	Sprite* one;
+	Sprite* two;
+	Sprite* three;
+	Sprite* go;
+	bool bothCanmove;
+	bool isBreak;
+
+	/* 名字 */
+	cocos2d::Label* player1Name;
+	cocos2d::Label* player2Name;
+	cocos2d::Label* vs;
+
+	/* 胜负 */
+	cocos2d::Label* winLabel;
+	/* 蓄力中断判断 */
+	bool yIsBreak;
+	bool fiveIsBreak;
+
+	/* 爆裂帧动画 */
+	void explosion();
+	cocos2d::Vector<SpriteFrame*> explore;
+
 	PhysicsWorld * m_world;
 	Size visibleSize;
 	/* 地面和玩家 */

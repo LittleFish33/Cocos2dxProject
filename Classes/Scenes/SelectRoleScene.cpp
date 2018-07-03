@@ -1,11 +1,13 @@
 #include "SelectRoleScene.h"
 #include "SimpleAudioEngine.h"
 #include "WelcomeScene.h"
+#include "ShareSingleton.h"
 #include "SelectBackgroundScene.h"
 #include <stdlib.h>
 
 using namespace CocosDenshion;
 
+/*本文件做了图片路径的一些修改，以及记录了选择角色的名字string，并加入共享单例类 -- by qyh */
 
 Scene* SelectRoleScene::createScene()
 {
@@ -35,35 +37,33 @@ bool SelectRoleScene::init()
 
 #pragma region UI界面
 
-	/* Todo：美工人员请将这里的图片替换为你选的素材和按你的需要设置位置 */
-	/* 这里的角色的变量名仅仅是为了基本框架的构建，请在选好角色之后替换这些变量名 */
-	/*游戏背景*/
+	
 	auto bg = Sprite::create("bg/selectRoleSceneBackground.png");
 	bg->setPosition(visibleSize / 2);
 	addChild(bg, 0);
 	
 	/* 可选角色1 */
 	roleItem1 = MenuItemImage::create(
-		"role1.png",
-		"role1.png",
+		"role/role1-Goku.png",
+		"role/role1-Goku.png",
 		CC_CALLBACK_1(SelectRoleScene::roleSelectedCallback, this, '1'));
 	roleItem1->setPosition(Vec2(400, 500));
 	/* 可选角色2 */
 	roleItem2 = MenuItemImage::create(
-		"role2.png",
-		"role2.png",
+		"role/role2-Vegeta.png",
+		"role/role2-Vegeta.png",
 		CC_CALLBACK_1(SelectRoleScene::roleSelectedCallback, this, '2'));
 	roleItem2->setPosition(Vec2(600, 500));
 	/* 可选角色3 */
 	roleItem3 = MenuItemImage::create(
-		"role3.png",
-		"role3.png",
+		"role/role3-Kid_Buu.png",
+		"role/role3-Kid_Buu.png",
 		CC_CALLBACK_1(SelectRoleScene::roleSelectedCallback, this, '3'));
 	roleItem3->setPosition(Vec2(400, 300));
 	/* 可选角色4 */
 	roleItem4 = MenuItemImage::create(
-		"role4.png",
-		"role4.png",
+		"role/role4-Frieza.png",
+		"role/role4-Frieza.png",
 		CC_CALLBACK_1(SelectRoleScene::roleSelectedCallback, this, '4'));
 	roleItem4->setPosition(Vec2(600, 300));
 	
@@ -99,8 +99,8 @@ bool SelectRoleScene::init()
 	this->addChild(menu, 1);
 
 	/*表明是角色1,2的图片*/
-	auto role1 = Sprite::create("role/role1.png");
-	auto role2 = Sprite::create("role/role2.png");
+	auto role1 = Sprite::create("role/role-1.png");
+	auto role2 = Sprite::create("role/role-2.png");
 	role1->setPosition(Vec2(150, 500));
 	role2->setPosition(Vec2(850, 500));
 	addChild(role1, 1);
@@ -110,34 +110,34 @@ bool SelectRoleScene::init()
 
 	/* 当你选择了一个角色之后，将会显示出该角色的大图在左下角或右下角，在此之前该图片是不可见的 */
 	/* 已选角色1 */
-	roleItem1_big = Sprite::create("role1-big.png");
+	roleItem1_big = Sprite::create("role/role1-big-Goku.png");
 	roleItem1_big->setPosition(Vec2(0, 0));
 	roleItem1_big->setVisible(false);
 	this->addChild(roleItem1_big, 0);
 
-	roleItem2_big = Sprite::create("role2-big.png");
+	roleItem2_big = Sprite::create("role/role2-big-Vegeta.png");
 	roleItem2_big->setPosition(Vec2(0, 0));
 	roleItem2_big->setVisible(false);
 	this->addChild(roleItem2_big, 0);
 
-	roleItem3_big = Sprite::create("role3-big.png");
+	roleItem3_big = Sprite::create("role/role3-big-Kid_Buu.png");
 	roleItem3_big->setPosition(Vec2(150, 300));
 	roleItem3_big->setVisible(false);
 	this->addChild(roleItem3_big, 0);
 
-	roleItem4_big = Sprite::create("role4-big.png");
+	roleItem4_big = Sprite::create("role/role4-big-Frieza.png");
 	roleItem4_big->setPosition(Vec2(850, 300));
 	roleItem4_big->setVisible(false);
 	this->addChild(roleItem4_big, 0);
 
 	/* P1标签和P2标签：在未选中状态是不可见的 */
-	p1Sprite = Sprite::create("p1.png");
+	p1Sprite = Sprite::create("role/p1.png");
 	p1Sprite->setPosition(Vec2(400, 500));
 	p1Sprite->setOpacity(200);
 	p1Sprite->setVisible(false);
 	this->addChild(p1Sprite, 2);
 
-	p2Sprite = Sprite::create("p2.png");
+	p2Sprite = Sprite::create("role/p2.png");
 	p2Sprite->setPosition(Vec2(0, 0));
 	p2Sprite->setOpacity(200);
 	p2Sprite->setVisible(false);
@@ -158,7 +158,8 @@ bool SelectRoleScene::init()
 void SelectRoleScene::menuBackCallback(Ref* pSender)
 {
 	float t = 1.2f;
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	auto newScene = WelcomeScene::createScene();
 	auto replacesense = CCTransitionFade::create(t, newScene);
 	Director::sharedDirector()->replaceScene(replacesense);
@@ -167,7 +168,8 @@ void SelectRoleScene::menuBackCallback(Ref* pSender)
 /* 选择角色 */
 void SelectRoleScene::roleSelectedCallback(Ref* pSender, char option)
 {
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 
 	if (!player1Selected) { /* 当前是为player1选择角色 */
 		invisibleRolesBig();
@@ -177,24 +179,49 @@ void SelectRoleScene::roleSelectedCallback(Ref* pSender, char option)
 			p1Sprite->setPosition(400, 500);	/* 设置p1标签的位置 */
 			roleItem1_big->setPosition(150, 300); /* 设置所选角色的大图的位置 */
 			roleItem1_big->setVisible(true);
+			roleItem2_big->setVisible(false);
+			roleItem3_big->setVisible(false);
+			roleItem4_big->setVisible(false);
+			
+			/////////////////////////////////////////////// qiuyihao
+			player1Name = "Goku";    /*记录选择的角色名*/
+
 			alreadySelected = 1;  /* 设置已经选择的角色编号，避免另一个玩家选择了同样的角色 */
 			break;
 		case '2':
 			p1Sprite->setPosition(600, 500);
 			roleItem2_big->setPosition(150, 300);
+			roleItem1_big->setVisible(false);
 			roleItem2_big->setVisible(true);
+			roleItem3_big->setVisible(false);
+			roleItem4_big->setVisible(false);
+
+			player1Name = "Vegeta";
+
 			alreadySelected = 2;
 			break;
 		case '3':
 			p1Sprite->setPosition(400, 300);
 			roleItem3_big->setPosition(150, 300);
+			roleItem1_big->setVisible(false);
+			roleItem2_big->setVisible(false);
 			roleItem3_big->setVisible(true);
+			roleItem4_big->setVisible(false);
+
+			player1Name = "Kid_Buu";
+
 			alreadySelected = 3;
 			break;
 		case '4':
 			p1Sprite->setPosition(600, 300);
 			roleItem4_big->setPosition(150, 300);
+			roleItem1_big->setVisible(false);
+			roleItem2_big->setVisible(false);
+			roleItem3_big->setVisible(false);
 			roleItem4_big->setVisible(true);
+
+			player1Name = "Frieza";
+
 			alreadySelected = 4;
 			break;
 		default:
@@ -214,21 +241,29 @@ void SelectRoleScene::roleSelectedCallback(Ref* pSender, char option)
 			p2Sprite->setPosition(400, 500);  /* 设置p2标签的位置 */
 			roleItem1_big->setPosition(850, 300); /* 设置所选角色的大图的位置 */
 			roleItem1_big->setVisible(true);
+			
+			player2Name = "Goku";
+
 			break;
 		case '2':
 			p2Sprite->setPosition(600, 500);
 			roleItem2_big->setPosition(850, 300);
+			player2Name = "Vegeta";
+
 			roleItem2_big->setVisible(true);
 			break;
 		case '3':
 			p2Sprite->setPosition(400, 300);
 			roleItem3_big->setPosition(850, 300);
 			roleItem3_big->setVisible(true);
+			player2Name = "Kid_Buu";
+
 			break;
 		case '4':
 			p2Sprite->setPosition(600, 300);
 			roleItem4_big->setPosition(850, 300);
 			roleItem4_big->setVisible(true);
+			player2Name = "Frieza";
 			break;
 		default:
 			break;
@@ -281,22 +316,23 @@ void SelectRoleScene::invisibleRolesBig()
 void SelectRoleScene::confirmCallback(Ref* pSender, char option)
 {
 	auto particle = ParticleFlower::create();
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	switch (option)
 	{
 	case '1':
 		player1Selected = true;
-		/* Todo：这里只是我添加的一个简单粒子特效，美工人员请做更好的优化 */
-		particle->setScale(3.0f);
-		particle->setPosition(150,100);
-		player1ConfirmItem->addChild(particle);
-		particle->runAction(Sequence::create(DelayTime::create(1.0f), RemoveSelf::create(true), nullptr));
 		return;
 	case '2':
 		break;
 	default:
 		return;
 	}
+
+	/*将选择好的角色名传入共享单例ShareSingleton */
+	ShareSingleton::GetInstance()->player1 = player1Name;
+	ShareSingleton::GetInstance()->player2 = player2Name;
+
 	/* 如果play2也已经选择好角色了，那么进入游戏背景选择界面（这里试过了不能放在switch里，所以让case2 直接break） */
 	float t = 1.2f;
 	auto newScene = SelectBackgroundScene::createScene();
