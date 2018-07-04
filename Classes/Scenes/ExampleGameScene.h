@@ -48,10 +48,7 @@ public:
 	void hit(float dt);
 	void gameOver();
 	void isCharge(float dt); /* 是否集气 */
-	void updateHP_MP(float delay); /*判断 mp hp的变化*/
-
-	/*在游戏结束时，利用一次性监听器，延迟切换*/
-	void CallGameOverScene(float dt);
+	void updateHP_MP(float delay);
 
 	/* 倒计时update与倒计时相应函数 */
 	void updateCountDown(float delay);
@@ -110,9 +107,11 @@ private:
 	bool yIsBreak;
 	bool fiveIsBreak;
 
-	/* 爆裂帧动画 */
+	/* 爆裂真动画 */
 	void explosion();
 	cocos2d::Vector<SpriteFrame*> explore;
+
+//-----------------------------------------------------------------------------------------------------------------------------------
 
 	PhysicsWorld * m_world;
 	Size visibleSize;
@@ -128,6 +127,11 @@ private:
 	bool firstPressA = true, firstPressD = true, A_KeyState = false, D_KeyState = false;
 	bool firstPress1 = true, secondPress1 = false;
 	bool firstPressG = true, secondPressG = false;
+	/* 一直跳跃与防守设置 */
+	bool W_KeyState = false, UPKeyState = false;
+	bool S_KeyState = false, DOWNKeyState = false;
+	bool FIVEKeyState = false, Y_KeyState = false;
+	
 	/*攻击炮的列表*/
 	std::list<Sprite*> player1UltimateBalls, player2UltimateBalls;
 	std::list<Sprite*> player1RangedBalls, player2RangedBalls;

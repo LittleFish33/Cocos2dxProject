@@ -33,7 +33,7 @@ Charactor::Charactor(string _name) {
 		deadNum = 5;
 		winNum = 7;
 		hittedAwayNum = 8;
-		dashNum = 4;
+		dashNum = 5;
 		defendNum = 1;
 		chargeNum = 4;
 		ultimateNum = 10;
@@ -52,100 +52,9 @@ Charactor::Charactor(string _name) {
 		hitEffectBegin = 53;
 		hitEffectEnd = 60;//被击打特效
 	}
-	else if (name == "Vegeta"){
-		idleNum = 4;
-		runNum = 6;
-		meleeAttack1Num = 5;
-		meleeAttack2Num = 12;
-		meleeAttack3Num = 17;
-		rangedAttackNum = 5;
-		jumpNum = 7;
-		hitNum = 2;
-		deadNum = 5;
-		winNum = 6;
-		hittedAwayNum = 2;  //
-		dashNum = 4;   //
-		defendNum = 1;
-		chargeNum = 4;
-		ultimateNum = 7;
+	else {
 
-		ultimateBallNum = 4;
-		ultimateBallBegin = 11;
-		ultimateBallEnd = 14;//大招
-		chargeEffectNum = 11;
-		chargeEffectBegin = 0;
-		chargeEffectEnd = 10;//蓄力
-		rangedBallNumber = 30;//远程攻击
-		explosionNum = 17;
-		explosionBegin = 31;
-		explosionEnd = 47;//爆炸
-		hitEffectNum = 8;
-		hitEffectBegin = 53;
-		hitEffectEnd = 60;//被击打特效
 	}
-	else if (name == "Goku") {
-		idleNum = 4;
-		runNum = 6;
-		meleeAttack1Num = 4;
-		meleeAttack2Num = 9;
-		meleeAttack3Num = 15;
-		rangedAttackNum = 6;
-		jumpNum = 7;
-		hitNum = 2;
-		deadNum = 5;
-		winNum = 8;
-		hittedAwayNum = 7; //todo
-		dashNum = 2;
-		defendNum = 1;
-		chargeNum = 4;
-		ultimateNum = 10;
-
-		ultimateBallNum = 4;
-		ultimateBallBegin = 11;
-		ultimateBallEnd = 14;//大招
-		chargeEffectNum = 11;
-		chargeEffectBegin = 0;
-		chargeEffectEnd = 10;//蓄力
-		rangedBallNumber = 30;//远程攻击
-		explosionNum = 17;
-		explosionBegin = 31;
-		explosionEnd = 47;//爆炸
-		hitEffectNum = 8;
-		hitEffectBegin = 53;
-		hitEffectEnd = 60;//被击打特效
-	}
-	else if (name == "Frieza") {
-		idleNum = 3;
-		runNum = 8;
-		meleeAttack1Num = 4;
-		meleeAttack2Num = 7;
-		meleeAttack3Num = 11;
-		rangedAttackNum = 6;
-		jumpNum = 7;
-		hitNum = 2;
-		deadNum = 4;
-		winNum = 5;
-		hittedAwayNum = 7;
-		dashNum = 2;
-		defendNum = 1;
-		chargeNum = 4;
-		ultimateNum = 5;
-
-		ultimateBallNum = 4;
-		ultimateBallBegin = 11;
-		ultimateBallEnd = 14;//大招
-		chargeEffectNum = 11;
-		chargeEffectBegin = 0;
-		chargeEffectEnd = 10;//蓄力
-		rangedBallNumber = 30;//远程攻击
-		explosionNum = 17;
-		explosionBegin = 31;
-		explosionEnd = 47;//爆炸
-		hitEffectNum = 8;
-		hitEffectBegin = 53;
-		hitEffectEnd = 60;//被击打特效
-	}
-
 
 	rangedBallStr = name + "_boom_" + std::to_string(rangedBallNumber) + ".png";
 }

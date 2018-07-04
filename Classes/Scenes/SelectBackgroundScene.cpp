@@ -95,14 +95,14 @@ bool SelectBackgroundScene::init()
 		"confirm-normal.png",
 		"confirm-selected.png",
 		CC_CALLBACK_1(SelectBackgroundScene::startGame, this));
-	confirmItem->setPosition(Vec2(512, 130));
+	confirmItem->setPosition(Vec2(512, 200));
 
 	/*选择地图字样*/
 	auto chooseBg = Sprite::create("button/ChooseBackground.png");
 	chooseBg->setPosition(Vec2(512, 680));
 	this->addChild(chooseBg, 0);
 
-	auto menu = Menu::create(bgItem1, bgItem2, bgItem3, bgItem4, bgItem5, bgItem6, bgItem7, bgItem8,confirmItem,  NULL);
+	auto menu = Menu::create(bgItem1, bgItem2, bgItem3, bgItem4, bgItem5, bgItem6, bgItem7, bgItem8, confirmItem,  NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
 
@@ -120,8 +120,7 @@ bool SelectBackgroundScene::init()
 /* 高亮被选择的游戏场景 */
 void SelectBackgroundScene::bgSelectedCallback(Ref* pSender, int option) 
 {
-	if (ShareSingleton::GetInstance()->controlVoice)
-		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	log("%d option", option);
 	switch (option)
 	{
@@ -167,8 +166,7 @@ void SelectBackgroundScene::bgSelectedCallback(Ref* pSender, int option)
 void SelectBackgroundScene::startGame(Ref * pSender)
 {
 	float t = 1.2f;
-	if (ShareSingleton::GetInstance()->controlVoice)
-		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	ShareSingleton::GetInstance()->selectedBackground = this->selectedBackground;
 	auto newScene = ExampleGameScene::createScene();
 	auto replacesense = CCTransitionFade::create(t, newScene);
