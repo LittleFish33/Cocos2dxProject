@@ -72,6 +72,7 @@ public:
 	bool stopJump = true, stopMeleeAttack = true, stopRangedAttack = true;
 	bool isHitted = false, isHitting = false, isUltimate = false;
 	bool isDead = false, isWin = false;
+	bool isMove = false;
 	int hittedCount = 0;
 	/*被连击的判断变量*/
 	bool isDouble = false;

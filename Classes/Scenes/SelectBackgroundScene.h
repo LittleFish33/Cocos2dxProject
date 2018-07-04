@@ -38,7 +38,7 @@ public:
 
 private:
 	/* 可选场景1-4 */
-	MenuItemImage * bgItem1, *bgItem2, *bgItem3, *bgItem4;
+	MenuItemImage * bgItem1, *bgItem2, *bgItem3, *bgItem4, *bgItem5, *bgItem6, *bgItem7, *bgItem8;
 	/* 一个边框，用于高亮已经选择的场景 */
 	Sprite * frame;
 	/* 确定按钮，点击进入游戏界面 */
