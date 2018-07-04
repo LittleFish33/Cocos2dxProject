@@ -9,19 +9,8 @@ void PlayerSprite::initSprite(std::string name, Sprite* player)
 	damage = EXAMPLE_PLAYER_DAMAGE;
 	speed = EXAMPLE_PLAYER_SPEED;
 	height = EXAMPLE_PLAYER_HEIGHT;
-	try {
-		
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + ".plist");
-		
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + "_boom.plist");
-		
-	}
-	catch (exception err) {
-		log("error %s.plist", name.c_str());
-		log("error %s_boom.plist", name.c_str());
-	}
-	log("loaded texture");
-
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + ".plist");
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + "_boom.plist");
 	charactor = new Charactor(name);
 }
 /* 预设置动画帧的值 */

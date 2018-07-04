@@ -1,11 +1,9 @@
 #include "ExampleGameScene.h"
 #include "SimpleAudioEngine.h"
 #include "GamePauseScene.h"
-#include "GameOverScene.h"
 #include "../configuration.h"
 #include "../ShareSingleton.h"
 #include "../Players/PlayerSprite.h"
-#define database UserDefault::getInstance()
 using namespace CocosDenshion;
 #include <iostream>
 #include <cmath>
@@ -82,7 +80,7 @@ bool ExampleGameScene::init()
 	int selectedBg = ShareSingleton::GetInstance()->selectedBackground;
 	char bgName[20];
 	sprintf(bgName, "bg/bg%d.png", selectedBg);
-	auto bgSprite = Sprite::create(bgName);
+	auto bgSprite = Sprite::create("bg/bg4.png");
 	bgSprite->setPosition(visibleSize / 2);
 	bgSprite->setScale(visibleSize.width / bgSprite->getContentSize().width, visibleSize.height / bgSprite->getContentSize().height);
 	this->addChild(bgSprite, 0);
@@ -105,13 +103,11 @@ bool ExampleGameScene::init()
 #pragma endregion
 	
 #pragma region 创建精灵
-	/*注 player1 在右边，使用数字键盘； player2 在左边，使用字母键盘*/
-
-	string Player1Name = ShareSingleton::GetInstance()->player1;
-	string Player2Name = ShareSingleton::GetInstance()->player2;
-
+	/* Todo：创建精灵的人需要修改一下这里的初始帧 */
+	/* 创建一张贴图，使用贴图创建精灵 */
 	player1 = new PlayerSprite();
-	/* 添加player1的物理刚体 数字键控制*/ 
+
+	/* 添加player1的物理刚体 */
 	physicPlayer1 = Sprite::create("physicplayer.png");
 	physicPlayer1->setPosition(Vec2(visibleSize.width / 4 * 3, visibleSize.height / 2 - 300));
 	auto player1Body = PhysicsBody::createBox(physicPlayer1->getContentSize(), PhysicsMaterial(10000.0f, 0.0f, 0.0f));
@@ -124,17 +120,19 @@ bool ExampleGameScene::init()
 	physicPlayer1->setScale(1.2f);
 	addChild(physicPlayer1, 3);
 
-	player1->initSprite(Player1Name, physicPlayer1);
+	player1->initSprite("Goku", physicPlayer1);
 	player1->initAnimateFrame();
-	player1->setPosition(Vec2(visibleSize.width / 4 * 3 , visibleSize.height / 2 - 300));
-	player1->setFlippedX(false);
+	player1->setPosition(Vec2(visibleSize.width / 4 * 3, visibleSize.height / 2 - 300));
+	player1->setFlippedX(true);
 	player1->setVisible(true);
-	addChild(player1, 3);
+	addChild(player1	, 3);
 	player1->idle();
 
 	player2 = new PlayerSprite();
 	/* 添加player2的物理刚体 */
-	physicPlayer2 = Sprite::create("physicplayer.png");
+	/* 弗利萨的尾巴问题，所以得换个刚体绑定 */
+	physicPlayer2 = Sprite::create("physicplayerForFrieza.png");
+	//physicPlayer2 = Sprite::create("physicplayer.png");
 	physicPlayer2->setPosition(Vec2(visibleSize.width / 4, visibleSize.height / 2 - 300));
 	auto player2Body = PhysicsBody::createBox(physicPlayer2->getContentSize(), PhysicsMaterial(10000.0f, 0.0f, 0.0f));
 	player2Body->setCategoryBitmask(0xFFFFFFFF);
@@ -146,9 +144,10 @@ bool ExampleGameScene::init()
 	physicPlayer2->setScale(1.2f);
 	addChild(physicPlayer2, 3);
 
-	player2->initSprite(Player2Name, physicPlayer2);
+	player2->initSprite("Frieza", physicPlayer2);
+	isFreiza = true;
 	player2->initAnimateFrame();
-	player2->setPosition(Vec2(visibleSize.width / 4 , visibleSize.height / 2 - 300));
+	player2->setPosition(Vec2(visibleSize.width / 4, visibleSize.height / 2 - 300));
 	player2->setFlippedX(true);
 	player2->setVisible(true);
 	addChild(player2, 3);
@@ -157,93 +156,81 @@ bool ExampleGameScene::init()
 	
 #pragma endregion
 
-#pragma region hp条和mp条	
-	/* Player1的Hp， 右边 */
-	Sprite* player1hpAndmpBorder = Sprite::create("Player2Border.png");
-	Sprite* player1hpContent = Sprite::create("hp-new.png");
-	/* Player1的Mp */
-	Sprite* player1mpContent = Sprite::create("mp-new.png");
+#pragma region hp条和mp条
+
+	/* Todo：请美工在这里优化HP条和MP条 */
+	/* Player1的Hp */
+	Sprite* player1hpBorder = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(0, 320, 420, 47)));
+	Sprite* player1hpContent = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(610, 362, 4, 16)));
+
+	//Sprite* player1hpBorder = Sprite::create("hp1.png");
+//	Sprite* player1hpContent = Sprite::create("hp2.png");
+
 	player1Hp = ProgressTimer::create(player1hpContent);
 	player1Hp->setScaleX(90);
-	player1Hp->setAnchorPoint(Vec2(1, 0));
+	player1Hp->setAnchorPoint(Vec2(0, 0));
 	player1Hp->setType(ProgressTimerType::BAR);
 	player1Hp->setBarChangeRate(Point(1, 0));
-	player1Hp->setMidpoint(Point(1, 0));
-	player1Hp->setPercentage(50);
-	player1Hp->setPosition(Vec2(935, 642));
+	player1Hp->setMidpoint(Point(0, 1));
+	player1Hp->setPercentage(100);
+	player1Hp->setPosition(Vec2(origin.x + 14 * player1Hp->getContentSize().width + 500, origin.y + visibleSize.height - 2 * player1Hp->getContentSize().height));
 	addChild(player1Hp, 1);
-	player1hpAndmpBorder->setAnchorPoint(Vec2(1, 0));
-	player1hpAndmpBorder->setPosition(Vec2(1025, 614));
-	addChild(player1hpAndmpBorder, 0);
+	player1hpBorder->setAnchorPoint(Vec2(0, 0));
+	player1hpBorder->setPosition(Vec2(origin.x + player1Hp->getContentSize().width + 500, origin.y + visibleSize.height - player1hpBorder->getContentSize().height));
+	addChild(player1hpBorder, 0);
+
+	/* Player1的Mp */
+	Sprite* player1mpBorder = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(0, 320, 420, 47)));
+	Sprite* player1mpContent = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(610, 362, 4, 16)));
 
 	player1Mp = ProgressTimer::create(player1mpContent);
 	player1Mp->setScaleX(90);
-	player1Mp->setAnchorPoint(Vec2(1, 0));
+	player1Mp->setAnchorPoint(Vec2(0, 0));
 	player1Mp->setType(ProgressTimerType::BAR);
 	player1Mp->setBarChangeRate(Point(1, 0));
-	player1Mp->setMidpoint(Point(1, 0));
-	player1Mp->setPercentage(60);
-	player1Mp->setPosition(Vec2(935, 625));
+	player1Mp->setMidpoint(Point(0, 1));
+	player1Mp->setPercentage(50);
+	player1Mp->setPosition(Vec2(origin.x + 14 * player1Mp->getContentSize().width + 500, origin.y + visibleSize.height - 2 * player1Mp->getContentSize().height - 100));
 	addChild(player1Mp, 1);
-	
+	player1mpBorder->setAnchorPoint(Vec2(0, 0));
+	player1mpBorder->setPosition(Vec2(origin.x + player1Mp->getContentSize().width + 500, origin.y + visibleSize.height - player1mpBorder->getContentSize().height - 100));
+	addChild(player1mpBorder, 0);
 
 	/* Player2的Hp */
-	Sprite* player2hpAndmpBorder = Sprite::create("Player1Border.png");
-	Sprite* player2hpContent = Sprite::create("hp-new.png");
-	/* Player2的Mp */
-	Sprite* player2mpContent = Sprite::create("mp-new.png");
+	Sprite* player2hpBorder = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(0, 320, 420, 47)));
+	Sprite* player2hpContent = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(610, 362, 4, 16)));
+
 	player2Hp = ProgressTimer::create(player2hpContent);
 	player2Hp->setScaleX(90);
 	player2Hp->setAnchorPoint(Vec2(0, 0));
 	player2Hp->setType(ProgressTimerType::BAR);
 	player2Hp->setBarChangeRate(Point(1, 0));
 	player2Hp->setMidpoint(Point(0, 1));
-	player2Hp->setPercentage(10);
-	player2Hp->setPosition(Vec2(90, 642));
+	player2Hp->setPercentage(100);
+	player2Hp->setPosition(Vec2(origin.x + 14 * player2Hp->getContentSize().width, origin.y + visibleSize.height - 2 * player2Hp->getContentSize().height));
+	//player2Hp->setPosition(Vec2(100,100));
 	addChild(player2Hp, 1);
-	player2hpAndmpBorder->setAnchorPoint(Vec2(0, 0));
-	player2hpAndmpBorder->setPosition(Vec2(0, 614));
-	addChild(player2hpAndmpBorder, 0);
+	player2hpBorder->setAnchorPoint(Vec2(0, 0));
+	player2hpBorder->setPosition(Vec2(origin.x + player2Hp->getContentSize().width, origin.y + visibleSize.height - player2hpBorder->getContentSize().height));
+	//player2hpBorder->setPosition(Vec2(300, 300));
+	addChild(player2hpBorder, 0);
+
+	/* Player2的Mp */
+	Sprite* player2mpBorder = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(0, 320, 420, 47)));
+	Sprite* player2mpContent = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(610, 362, 4, 16)));
 
 	player2Mp = ProgressTimer::create(player2mpContent);
 	player2Mp->setScaleX(90);
 	player2Mp->setAnchorPoint(Vec2(0, 0));
 	player2Mp->setType(ProgressTimerType::BAR);
 	player2Mp->setBarChangeRate(Point(1, 0));
-	player2Mp->setMidpoint(Point(0, 1));  ///  从左到右显示进度条
-	player2Mp->setPercentage(20);
-	player2Mp->setPosition(Vec2(90, 625));
-	//player1Mp->setPosition(Vec2(origin.x + 14 * player1Mp->getContentSize().width + 500, origin.y + visibleSize.height - 2 * player1Mp->getContentSize().height - 100));
+	player2Mp->setMidpoint(Point(0, 1));
+	player2Mp->setPercentage(50);
+	player2Mp->setPosition(Vec2(origin.x + 14 * player2Mp->getContentSize().width, origin.y + visibleSize.height - 2 * player2Mp->getContentSize().height - 100));
 	addChild(player2Mp, 1);
-#pragma endregion
-
-#pragma region  添加游戏人物头像到信息框，以及显示人物姓名
-	auto player1Icon = Sprite::create("role/" + Player1Name + "-icon.png");
-	auto player2Icon = Sprite::create("role/" + Player2Name + "-icon.png");
-
-	player1Icon->setAnchorPoint(Vec2(1, 0)); 
-	player2Icon->setAnchorPoint(Vec2(0, 0));
-	player1Icon->setPosition(Vec2(1012, 631));
-	player2Icon->setPosition(Vec2(12, 631));
-
-	addChild(player1Icon, 0);
-	addChild(player2Icon, 0);
-
-
-	player1Name = Label::createWithTTF(ShareSingleton::GetInstance()->player1.c_str(), "fonts/comicsansms.ttf", 20);
-	player1Name->setAnchorPoint(Vec2(1, 0));
-	player1Name->setPosition(Vec2(935,660));
-	player1Name->setColor(Color3B(0, 0, 0));
-	addChild(player1Name, 1);
-	player2Name = Label::createWithTTF(ShareSingleton::GetInstance()->player2.c_str(), "fonts/comicsansms.ttf", 20);
-	player2Name->setAnchorPoint(Vec2(0, 0));
-	player2Name->setPosition(Vec2(90, 660));
-	player2Name->setColor(Color3B(0, 0, 0));
-	addChild(player2Name, 1);
-
-	vs = Label::createWithTTF("VS", "fonts/comicsansms.ttf", 60);
-	vs->setPosition(visibleSize.width / 2, visibleSize.height / 2 + 200);
-	vs->setColor(Color3B(255, 255, 0));
+	player2mpBorder->setAnchorPoint(Vec2(0, 0));
+	player2mpBorder->setPosition(Vec2(origin.x + player2Mp->getContentSize().width, origin.y + visibleSize.height - player2mpBorder->getContentSize().height - 100));
+	addChild(player2mpBorder, 0);
 
 #pragma endregion
 
@@ -253,18 +240,16 @@ bool ExampleGameScene::init()
 	auto audio = SimpleAudioEngine::getInstance();
 	/*预加载并循环播放背景音乐*/
 	//	audio->preloadBackgroundMusic("music/WelcomeSceneBackground.mp3");  
-	if (ShareSingleton::GetInstance()->controlVoice) {
-		audio->playBackgroundMusic("music/MainGameSceneBgm.mp3", true);
-		audio->setBackgroundMusicVolume(0.80);
+	audio->playBackgroundMusic("music/MainGameSceneBgm.mp3", true);
+	audio->setBackgroundMusicVolume(0.80);
 
-		/*预加载点击音效*/
-		audio->preloadEffect("music/ClickCamera.wav");
-		audio->setEffectsVolume(0.80);
+	/*预加载点击音效*/
+	audio->preloadEffect("music/ClickCamera.wav");
+	audio->setEffectsVolume(0.80);
 
-		/*加载并播放 3 2 1 开始 音乐*/
-		audio->playEffect("music/321.mp3", false, 1.0f, 0.0f, 1.0f);
-	}
-	
+	/*加载并播放 3 2 1 开始 音乐*/
+	audio->playEffect("music/321.mp3", false, 1.0f, 0.0f, 1.0f);
+
 #pragma endregion
 
 
@@ -327,11 +312,11 @@ bool ExampleGameScene::init()
 #pragma region 测试动画用按钮------邵梓硕
 
 	auto label = Label::createWithTTF("hit", "fonts/arial.ttf", 24);
-	 
+
 	auto changeItem = MenuItemLabel::create(label, CC_CALLBACK_1(ExampleGameScene::hitTest, this));
-	label->setVisible(false);
 	auto menu = Menu::create(changeItem, NULL);
 	menu->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	menu->setVisible(false);
 	addChild(menu, 2);
 
 	auto label2 = Label::createWithTTF("dead", "fonts/arial.ttf", 24);
@@ -339,41 +324,12 @@ bool ExampleGameScene::init()
 	auto changeItem2 = MenuItemLabel::create(label2, CC_CALLBACK_1(ExampleGameScene::deadTest, this));
 	auto menu2 = Menu::create(changeItem2, NULL);
 	menu2->setPosition(visibleSize.width / 2 + 50, visibleSize.height / 2);
+	menu2->setVisible(false);
 	addChild(menu2, 2);
 
 #pragma endregion
 
-	//--------------------------------------------------------------------------------------------------------------------------------------------------------
-#pragma region 创建倒计时
-	totalTime = 122;
-	schedule(schedule_selector(ExampleGameScene::updateCountDown), 1);
-
-#pragma endregion
-
-#pragma region 三秒回合图标和123倒计时
-	bothCanmove = false;
-	round1 = Sprite::create("round1.png");
-	round1->setPosition(Vec2(origin.x + 14 * player2Mp->getContentSize().width + 455,
-		origin.y + visibleSize.height - 2 * player2Mp->getContentSize().height - 20));
-	addChild(round1, 3);
-	three = Sprite::create("3.png");
-	three->setPosition(Vec2(origin.x + 14 * player2Mp->getContentSize().width + 455
-		, origin.y + visibleSize.height - 2 * player2Mp->getContentSize().height - 200));
-	addChild(three, 3);
-	isBreak = false;
-#pragma endregion
-
-	yIsBreak = false;
-	fiveIsBreak = false;
-	/* 爆裂帧动画 */
-	explosion();
-
-	
-	//addChild(vs, 1);
-	//--------------------------------------------------------------------------------------------------------------------------------------------------------
-
-	
-	return true;
+    return true;
 }
 
 /* 碰撞发生函数 */
@@ -578,15 +534,6 @@ void ExampleGameScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 
 void ExampleGameScene::update(float delay)
 {
-
-	////////////////qyh, 修复从暂停场景回退时，播放按钮没有从暂停状态恢复
-	if (ShareSingleton::GetInstance()->controlPause) {
-		playOrPauseState = 1;
-		playOrPauseItem->setNormalImage(Sprite::create("button/play.png"));
-	}
-
-
-
 	/* 如果是被打飞的状态，那么让刚体和精灵的位置相同 */
 	if (player1->getActionByTag(6) == nullptr) {
 		player1->setPositionX(physicPlayer1->getPositionX());
@@ -651,57 +598,7 @@ void ExampleGameScene::update(float delay)
 /* Todo: 双人对战的人完成这部分的代码 */
 void ExampleGameScene::gameOver()
 {
-	/* 停止所有计时器操作 */
-	this->unscheduleAllSelectors();
-	string name1 = ShareSingleton::GetInstance()->player1;
-	string name2 = ShareSingleton::GetInstance()->player2;
-	int score1 = 0, score2 = 0;
-
-#pragma region WinLabel
-	winLabel = Label::createWithTTF("", "fonts/comicsansms.ttf", 108);
-	winLabel->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-	winLabel->setColor(Color3B(255, 255, 255));
-	addChild(winLabel, 2);
-
-	//bothCanmove = false;
-	if (player1->getHp() > player2->getHp()) {
-		winLabel->setString(name1 + " Win");
-		score1 += 1;
-		score2 -= 1;
-	}
-	else if (player1->getHp() < player2->getHp()) {
-		winLabel->setString(name2 + " Win");
-		score1 -= 1;
-		score2 += 1;
-	}
-	else if (player1->getHp() == player2->getHp()) {
-		winLabel->setString("Draw!");
-	}
-#pragma endregion
-
-#pragma region 数据存储
-
-	if (!database->getBoolForKey("isExist")) {
-		database->setBoolForKey("isExist", true);
-	}
-	int one = database->getIntegerForKey(name1.c_str(), 0);
-	int two = database->getIntegerForKey(name2.c_str(), 0);
-	CCLOG("SSS%d", one);
-	CCLOG("TTT%d", two);
-
-	score1 = score1 + one;
-	score2 = score2 + two;
-	database->setIntegerForKey(name1.c_str(), score1);
-	database->setIntegerForKey(name2.c_str(), score2);
-
-	database->flush();
-	ShareSingleton::GetInstance()->xmlPath = FileUtils::getInstance()->getWritablePath() + "UserDefault.xml";
-	log("%s", ShareSingleton::GetInstance()->xmlPath);
-
-#pragma endregion
-
-	/*弹出游戏结束界面,  需要延迟1s*/
-	scheduleOnce(schedule_selector(ExampleGameScene::CallGameOverScene), 1.0f);
+	
 }
 
 /* 集气状态 */
@@ -736,33 +633,19 @@ void ExampleGameScene::updateHP_MP(float delay)
 	}
 }
 
-void ExampleGameScene::CallGameOverScene(float dt)
-{
-
-#pragma region 弹出结束游戏场景
-
-	/*得到窗口的大小*/
-	Size visibleSize = Director::sharedDirector()->getVisibleSize();
-	RenderTexture *renderTexture = RenderTexture::create(visibleSize.width, visibleSize.height);
-
-	/*遍历当前类的所有子节点信息，画入renderTexture中。
-	这里类似截图。*/
-	renderTexture->begin();
-	this->getParent()->visit();
-	renderTexture->end();
-
-	auto newScene = GameOverScene::CreateScene(renderTexture);
-	/*结束游戏界面，压入场景堆栈。并切换到GameOverScene界面*/
-	Director::sharedDirector()->pushScene(newScene);
-
-#pragma endregion
-}
-
 
 /* TODO:这里的对打逻辑存在一点小问题，有时候会出现两个人互打的情况； */
 void ExampleGameScene::hit(float dt)
 {
-	if (abs(player1->getPositionX() - player2->getPositionX()) < 100) {
+	/* 因为弗利萨尾巴太长，所以判定距离的方法得区别开来 */
+	bool flag = false;
+	if (isFreiza) {
+		flag = abs(physicPlayer1->getPositionX() - physicPlayer2->getPositionX()) < physicPlayer1->getContentSize().width + physicPlayer2->getContentSize().width - 50;
+	}
+	else {
+		flag = abs(player1->getPositionX() - player2->getPositionX()) < 100;
+	}
+	if (flag) {
 		bool player1FirstAttack = false,bothIdle = false;
 		if (player1->isHitting && player2->isHitting) {
 			player1FirstAttack = player1LastHit > player2LastHit;
@@ -893,45 +776,6 @@ void ExampleGameScene::LeftKeyPressed(float t)
 	firstPressL = true;
 }
 
-void ExampleGameScene::updateCountDown(float delay)
-{
-	bothCanmove = true;
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	if (totalTime == 122) {
-		three->removeFromParent();
-		two = Sprite::create("2.png");
-		two->setPosition(Vec2(origin.x + 14 * player2Mp->getContentSize().width + 455
-			, origin.y + visibleSize.height - 2 * player2Mp->getContentSize().height - 200));
-		addChild(two, 3);
-	}
-	else if (totalTime == 121) {
-		two->removeFromParent();
-		one = Sprite::create("1.png");
-		one->setPosition(Vec2(origin.x + 14 * player2Mp->getContentSize().width + 455
-			, origin.y + visibleSize.height - 2 * player2Mp->getContentSize().height - 200));
-		addChild(one, 3);
-	}
-	else if (totalTime == 120) {
-		one->removeFromParent();
-		bothCanmove = true;
-
-		countDown = Label::createWithTTF("120", "fonts/comicsansms.ttf", 48);
-		countDown->setPosition(visibleSize.width / 2, visibleSize.height / 2 + 250);
-		countDown->setColor(Color3B(255, 255, 255));
-		countDown->enableShadow();
-		addChild(countDown, 3);
-	}
-	else if (totalTime < 120) {
-		char str[10];
-		sprintf(str, "%d", totalTime); /* 将int类型转化为字符串char*类型 */
-		countDown->setString(str);
-	}
-	if (totalTime > 0)
-		totalTime--;
-	else if (totalTime == 0)
-		gameOver();
-}
-
 /* 右键第一次按下时响应 */
 void ExampleGameScene::RightKeyPressed()
 {
@@ -987,7 +831,6 @@ void ExampleGameScene::D_KeyPressed()
 		firstPressD = true;
 	}
 }
-
 /* 延时0.3秒将firstPressD重新设为true */
 void ExampleGameScene::D_KeyPressed(float t)
 {
@@ -1016,7 +859,6 @@ void ExampleGameScene::One_KeyPressed()
 		secondPress1 = false;
 	}
 }
-
 void ExampleGameScene::One_KeyPressed(float t)
 {
 	firstPress1 = true;
@@ -1173,33 +1015,20 @@ void ExampleGameScene::VoicePauseSelectedCallback(Ref * pSender)
 		SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 		SimpleAudioEngine::getInstance()->pauseAllEffects();
 		voiceState = 0;
-		voiceItem->setNormalImage(Sprite::create("button/SoundOn.png"));
+		voiceItem->setNormalImage(Sprite::create("button/SoundOff.png"));
 	}
 	else {
 		SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 		SimpleAudioEngine::getInstance()->resumeAllEffects();
 		voiceState = 1;
 		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
-		voiceItem->setNormalImage(Sprite::create("button/SoundOff.png"));	
+		voiceItem->setNormalImage(Sprite::create("button/SoundOn.png"));	
 	}
 }
 
 /*游戏暂停，弹出暂停场景的回调函数*/
 void ExampleGameScene::playOrPauseCallback(Object * pSender)
 {
-	/* 播放暂停按钮切换*/
-	if (playOrPauseState) {
-		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
-		playOrPauseState = 0;
-		ShareSingleton::GetInstance()->controlPause = false;
-		playOrPauseItem->setNormalImage(Sprite::create("button/pause.png"));
-	}
-	else {
-		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
-		playOrPauseState = 1;
-		playOrPauseItem->setNormalImage(Sprite::create("button/play.png"));
-	}
-
 	/*得到窗口的大小*/
 	Size visibleSize = Director::sharedDirector()->getVisibleSize();
 	RenderTexture *renderTexture = RenderTexture::create(visibleSize.width, visibleSize.height);
@@ -1209,25 +1038,22 @@ void ExampleGameScene::playOrPauseCallback(Object * pSender)
 	renderTexture->begin();
 	this->getParent()->visit();
 	renderTexture->end();
-	float t =  0.5;
-	auto replacesense = CCTransitionFade::create(t, GamePauseScene::CreateScene(renderTexture));
+
 	/*将游戏界面暂停，压入场景堆栈。并切换到GamePauseScene界面*/
-	Director::sharedDirector()->pushScene(replacesense);
-
+	Director::sharedDirector()->pushScene(GamePauseScene::CreateScene(renderTexture));
+	
 	log(" to game pause scene");
-}
 
-void ExampleGameScene::explosion()
-{
-	auto texture = Director::getInstance()->getTextureCache()->addImage("explosion.png");
-	explore.reserve(8);
-	for (int i = 0; i < 5; i++) {
-		auto frame = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(191 * i, 0, 191, 192)));
-		explore.pushBack(frame);
+	/* 播放暂停按钮切换*/
+	if (playOrPauseState) {
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+		playOrPauseState = 0;
+		//Director::getInstance()->set
+		playOrPauseItem->setNormalImage(Sprite::create("button/pause.png"));
 	}
-	for (int i = 0; i < 2; i++) {
-		auto frame = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(191 * i, 192, 191, 192)));
+	else {
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+		playOrPauseState = 1;
+		playOrPauseItem->setNormalImage(Sprite::create("button/play.png"));
 	}
-	auto explore_animation = Animation::createWithSpriteFrames(explore, 0.1f);
-	AnimationCache::getInstance()->addAnimation(explore_animation, "exploreAnimation");
 }

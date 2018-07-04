@@ -2,7 +2,6 @@
 #include "cocos2d.h"
 #include "WelcomeScene.h"
 #include "SimpleAudioEngine.h"
-#include "ShareSingleton.h"
 using namespace CocosDenshion;
 
 /*暂停页面的创建 ，将当前游戏场景截图作为纹理传入暂停场景，然后出现菜单按钮*/
@@ -97,18 +96,12 @@ bool GamePauseScene::init()
 /* 继续游戏按钮的回调*/
 void GamePauseScene::ContinueGameCallback(Object * pSender)
 {
-	if (ShareSingleton::GetInstance()->controlVoice)
-		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
-	ShareSingleton::GetInstance()->controlPause = true;  // 图标按钮需要恢复为播放状态
 	Director::sharedDirector()->popScene();
 }
 
 /*返回菜单按钮的回调*/
 void GamePauseScene::ReturnToMenuSceneCallback(Object * pSender)
 {
-	if (ShareSingleton::GetInstance()->controlVoice)
-		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
-
 	float t = 1.0f;
 	auto newScene = WelcomeScene::createScene();
 	auto replacesense = TransitionFade::create(t, newScene);
@@ -118,9 +111,6 @@ void GamePauseScene::ReturnToMenuSceneCallback(Object * pSender)
 /*结束游戏的回调*/
 void GamePauseScene::QuiteGameCallback(Object * pSender)
 {
-	if (ShareSingleton::GetInstance()->controlVoice)
-		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
-
 	Director::sharedDirector()->end();
 }
 
