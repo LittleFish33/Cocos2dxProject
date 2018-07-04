@@ -50,6 +50,9 @@ public:
 	void isCharge(float dt); /* 是否集气 */
 	void updateHP_MP(float delay);
 
+	/* 倒计时update与倒计时相应函数 */
+	void updateCountDown(float delay);
+
 	void RightKeyPressed();
 	void RightKeyPressed(float t);
 	void LeftKeyPressed();
@@ -82,6 +85,34 @@ public:
     CREATE_FUNC(ExampleGameScene);
 
 private:
+	/* 倒计时组件 */
+	int totalTime;
+	cocos2d::Label* countDown;
+	Sprite* round1;
+	Sprite* one;
+	Sprite* two;
+	Sprite* three;
+	Sprite* go;
+	bool bothCanmove;
+	bool isBreak;
+
+	/* 名字 */
+	cocos2d::Label* player1Name;
+	cocos2d::Label* player2Name;
+	cocos2d::Label* vs;
+
+	/* 胜负 */
+	cocos2d::Label* winLabel;
+	/* 蓄力中断判断 */
+	bool yIsBreak;
+	bool fiveIsBreak;
+
+	/* 爆裂真动画 */
+	void explosion();
+	cocos2d::Vector<SpriteFrame*> explore;
+
+//-----------------------------------------------------------------------------------------------------------------------------------
+
 	PhysicsWorld * m_world;
 	Size visibleSize;
 	/* 地面和玩家 */
@@ -96,11 +127,14 @@ private:
 	bool firstPressA = true, firstPressD = true, A_KeyState = false, D_KeyState = false;
 	bool firstPress1 = true, secondPress1 = false;
 	bool firstPressG = true, secondPressG = false;
+	/* 一直跳跃与防守设置 */
+	bool W_KeyState = false, UPKeyState = false;
+	bool S_KeyState = false, DOWNKeyState = false;
+	bool FIVEKeyState = false, Y_KeyState = false;
+	
 	/*攻击炮的列表*/
 	std::list<Sprite*> player1UltimateBalls, player2UltimateBalls;
 	std::list<Sprite*> player1RangedBalls, player2RangedBalls;
-	/* 弗利萨因为他的尾巴太长，有一些麻烦的东西和其他人不同 */
-	bool isFreiza = false;
 
 	__int64 player1LastHit, player2LastHit;
 	ShareSingleton* shareInstance = ShareSingleton::GetInstance();

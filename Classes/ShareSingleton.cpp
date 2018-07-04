@@ -7,7 +7,6 @@ public:
 
 	bool opponentFlipx = false;
 	int selectedBackground = 1;
-
 	static ShareSingleton* GetInstance()
 	{
 		if (Instance == nullptr) {

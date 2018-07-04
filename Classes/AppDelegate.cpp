@@ -1,8 +1,8 @@
 #include "AppDelegate.h"
 #include "Scenes/WelcomeScene.h"
 #include "Scenes/ExampleGameScene.h"
-#include "Scenes/OnlineGameScene.h"
-#include "Scenes/SocketServerScene.h"
+#include "Scenes/InputNameScene.h"
+#include "Scenes/RankListScene.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -97,12 +97,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = OnlineGameScene::createScene();
-	//auto scene = SocketServerScene::createScene();
-	//auto scene = ExampleGameScene::createScene();
-	
+	auto scene = WelcomeScene::createScene();
+
+	/* 测试排行榜代码，直接跳转到名称输入界面 */
+	auto inputScene = InputNameScene::createScene();
+	auto playScene = ExampleGameScene::createScene(); 
+	auto rankScene = RankListScene::createScene(); 
     // run
-    director->runWithScene(scene);
+    director->runWithScene(playScene);
 
     return true;
 }

@@ -92,8 +92,8 @@ bool SelectBackgroundScene::init()
 
 	/* È·¶¨°´Å¥ */
 	confirmItem = MenuItemImage::create(
-		"button/confirm-normal.png",
-		"button/confirm-selected.png",
+		"confirm-normal.png",
+		"confirm-selected.png",
 		CC_CALLBACK_1(SelectBackgroundScene::startGame, this));
 	confirmItem->setPosition(Vec2(512, 200));
 
@@ -102,7 +102,7 @@ bool SelectBackgroundScene::init()
 	chooseBg->setPosition(Vec2(512, 680));
 	this->addChild(chooseBg, 0);
 
-	auto menu = Menu::create(bgItem1, bgItem2, bgItem3, bgItem4, bgItem5, bgItem6, bgItem7, bgItem8,confirmItem,  NULL);
+	auto menu = Menu::create(bgItem1, bgItem2, bgItem3, bgItem4, bgItem5, bgItem6, bgItem7, bgItem8, confirmItem,  NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
 

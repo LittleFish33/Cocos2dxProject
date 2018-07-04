@@ -246,6 +246,7 @@ void PlayerSprite::idle()
 	auto animation = Animation::createWithSpriteFrames(idleVector, 0.3f);
 	auto animate = Animate::create(animation);
 	auto idleAction = RepeatForever::create(animate);
+	//stopAllActions();
 	idleAction->setTag(0);
 	runAction(idleAction);
 }
@@ -311,20 +312,20 @@ void PlayerSprite::meleeAttack3()
 		isHitting = false;
 	});
 
-	auto end = CallFuncN::create([&](Ref* sender) {
-		isRun = false;
-		idle();
-	});
+auto end = CallFuncN::create([&](Ref* sender) {
+	isRun = false;
+	idle();
+});
 
-	auto animation = Animation::createWithSpriteFrames(meleeAttackVector3, 0.1f);
-	auto animate = Animate::create(animation);
-	animate->setOriginalTarget(false);
-	auto idleAnimation = Animation::createWithSpriteFrames(idleVector, 0.1f);
-	auto idleAnimate = Animate::create(idleAnimation);
-	auto seq = Sequence::create(begin, animate, attackEnd, idleAnimate, end, NULL);
-	seq->setTag(4);
-	stopAllActions();
-	runAction(seq);
+auto animation = Animation::createWithSpriteFrames(meleeAttackVector3, 0.1f);
+auto animate = Animate::create(animation);
+animate->setOriginalTarget(false);
+auto idleAnimation = Animation::createWithSpriteFrames(idleVector, 0.1f);
+auto idleAnimate = Animate::create(idleAnimation);
+auto seq = Sequence::create(begin, animate, attackEnd, idleAnimate, end, NULL);
+seq->setTag(4);
+stopAllActions();
+runAction(seq);
 }
 
 
@@ -359,22 +360,50 @@ void PlayerSprite::jump()
 		return;
 	}
 	auto begin = CallFuncN::create([&](Ref* sender) {
-		physicPlayer->setPositionY(300);
+		//physicPlayer->setPositionY(300);
 		isRun = true;
 	});
 	auto end = CallFuncN::create([&](Ref* sender) {
 		isRun = false;
-		physicPlayer->setPositionY(84);
+		//physicPlayer->setPositionY(84);
 		idle();
 	});
-	auto jumpBy = JumpBy::create(1, Vec2(0, 0), 200, 1);
+
+	/* jump 的动画 */
 	auto animation = Animation::createWithSpriteFrames(jumpVector, 0.1f);
 	auto animate = Animate::create(animation);
+
+	/* jump的位移 200高度 第二个1/跳的次数 第一个1/跳跃时间 vec2(0, 80)/跳跃之后高度增加80 */
+	auto jumpBy = JumpBy::create(1, Vec2(0, 0), 200, 1);
 	auto myspawn = Spawn::createWithTwoActions(jumpBy, animate);
+
+	/* Spawn 将两个动作二合一，先是begin然后*/
 	auto seq = Sequence::create(begin, myspawn, end, NULL);
 	seq->setTag(3);
 	stopAllActions();
 	runAction(seq);
+
+	//if (ishitByUltimate) {
+	//	stopAction(seq);
+	//	stopActionByTag(3);
+	//	setSpriteFrame(idleVector.front());
+	//	auto begin = CallFuncN::create([&](Ref* sender) {
+	//		ishitByUltimate = true;
+	//	});
+
+	//	auto animation = Animation::createWithSpriteFrames(deadVector, 0.25f);
+	//	auto animate = Animate::create(animation);
+	//	auto end = CallFuncN::create([&](Ref* sender) {;
+	//	idle();
+	//	ishitByUltimate = false;
+	//	});
+
+	//	/* seq 的作用相当于 animate 动作延迟 2f 执行 end 动作 */
+	//	auto seq = Sequence::create(begin, animate, DelayTime::create(0.2f), end, NULL);
+	//	stopAllActions();
+	//	stopActionByTag(3);
+	//	runAction(seq);
+	//}
 }
 
 /* 玩家被攻击 */
@@ -383,12 +412,18 @@ void PlayerSprite::hit()
 	if (isRun) {
 		return;
 	}
-	if (hittedCount < 3) {
-		if (hp >= 5) {
-			hp -= 5;
+	if (abs(getPositionX()) < 30.0 || abs(getPositionX() - 1022.0) < 30.0 || hittedCount < 3) {
+		hittedCount %= 3;
+		if (isDefend) {
+			isDefend = false;
 		}
 		else {
-			hp = 0;
+			if (hp >= 5) {
+				hp -= 5;
+			}
+			else {
+				hp = 0;
+			}
 		}
 		auto begin = CallFuncN::create([&](Ref* sender) {
 			isHitted = true;
@@ -424,25 +459,6 @@ void PlayerSprite::dead()
 	runAction(animate);
 }
 
-/* 被大招击中 */
-void PlayerSprite::hitByUltimate()
-{
-	if (hp >= 30) {
-		hp -= 30;
-	}
-	else {
-		hp = 0;
-	}
-	stopAllActions();
-	auto animation = Animation::createWithSpriteFrames(deadVector, 0.25f);
-	auto animate = Animate::create(animation);
-	auto end = CallFuncN::create([&](Ref* sender) {;
-		idle();
-	});
-	auto seq = Sequence::create(animate, DelayTime::create(0.2f), end, NULL);
-	runAction(seq);
-}
-
 /* 左冲 */
 void PlayerSprite::dashLeft(Vec2 oppoentPosition)
 {
@@ -451,11 +467,14 @@ void PlayerSprite::dashLeft(Vec2 oppoentPosition)
 	}
 	isMove = true;
 	setFlippedX(false);
-	physicPlayer->getPhysicsBody()->setVelocity(Vec2(-800,0));
-	auto animation = Animation::createWithSpriteFrames(dashVector, 0.09f, 0);
+	/* 负责移动 停止其他动作 */
+	physicPlayer->getPhysicsBody()->setVelocity(Vec2(-1000,0));
+	stopAllActions();
+
+	/* 负责移动中添加动画 */
+	auto animation = Animation::createWithSpriteFrames(dashVector, 0.09f, 0); /* 0.09f 动画播放速度 */
 	auto animate = Animate::create(animation);
 	animate->setTag(13);
-	stopAllActions();
 	runAction(animate);
 }
 
@@ -467,7 +486,7 @@ void PlayerSprite::dashRight(Vec2 oppoentPosition)
 	}
 	isMove = true;
 	setFlippedX(true);
-	physicPlayer->getPhysicsBody()->setVelocity(Vec2(800, 0));
+	physicPlayer->getPhysicsBody()->setVelocity(Vec2(1000, 0));
 	auto animation = Animation::createWithSpriteFrames(dashVector, 0.09f, 0);
 	auto animate = Animate::create(animation);
 	animate->setTag(14);
@@ -527,7 +546,6 @@ void PlayerSprite::hittedAway() {
 		}
 	}
 
-
 	auto moveBy1 = MoveBy::create(0.5f, Vec2(moveByX * -direction, -10));
 	auto myspawn1 = Spawn::createWithTwoActions(animate1, moveBy1);
 
@@ -547,6 +565,7 @@ void PlayerSprite::defend() {
 	if (isRun) {
 		return;
 	}
+	isDefend = true;
 	auto animation = Animation::createWithSpriteFrames(defendVector, 0.09f);
 	auto animate = Animate::create(animation);
 	auto act = RepeatForever::create(animate);
@@ -577,7 +596,6 @@ void PlayerSprite::charge() {
 	seq->setTag(12);
 	stopAllActions();
 	runAction(seq);
-
 }
 
 /* 大招 */
@@ -611,4 +629,59 @@ void PlayerSprite::ultimate() {
 	seq->setTag(9);
 	stopAllActions();
 	runAction(seq);
+
+	if (ishitByUltimate) {
+		stopAction(seq);
+		setSpriteFrame(idleVector.front());
+		auto begin = CallFuncN::create([&](Ref* sender) {
+			ishitByUltimate = true;
+		});
+
+		auto animation = Animation::createWithSpriteFrames(deadVector, 0.25f);
+		auto animate = Animate::create(animation);
+		auto end = CallFuncN::create([&](Ref* sender) {;
+		idle();
+		ishitByUltimate = false;
+		});
+
+		/* seq 的作用相当于 animate 动作延迟 2f 执行 end 动作 */
+		auto seq = Sequence::create(begin, animate, DelayTime::create(0.2f), end, NULL);
+		stopAllActions();
+		stopActionByTag(3);
+		runAction(seq);
+	}
+}
+
+/* 被大招击中 */
+void PlayerSprite::hitByUltimate()
+{
+	if (hp >= 30) {
+		hp -= 30;
+	}
+	else {
+		hp = 0;
+	}
+	isDefend = false;
+	auto begin = CallFuncN::create([&](Ref* sender) {
+		ishitByUltimate = true;
+	});
+
+	auto animation = Animation::createWithSpriteFrames(deadVector, 0.25f);
+	auto animate = Animate::create(animation);
+	auto end = CallFuncN::create([&](Ref* sender) {;
+		idle();
+		ishitByUltimate = false;
+	});
+
+	/* seq 的作用相当于 animate 动作延迟 2f 执行 end 动作 */
+	auto seq = Sequence::create(begin, animate, DelayTime::create(0.2f), end, NULL);
+	stopAllActions();
+	stopActionByTag(3);
+	runAction(seq);
+
+	//if (isUltimate) {
+	//	stopActionByTag(9);
+	//	stopAction(seq);
+	//	runAction(seq);
+	//}
 }

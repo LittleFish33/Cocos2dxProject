@@ -11,6 +11,7 @@
 **************************************************************************/
 #ifndef SHARESINGLETON_H
 #define SHARESINGLETON_H
+using namespace std;
 class ShareSingleton
 {
 private:
@@ -26,6 +27,11 @@ public:
 	/*代表选择地图序号*/
 	int selectedBackground = 1;
 
+	/* 两个玩家名字 */
+	string player1 = "NONE";
+	string player2 = "NONE";
+
+	string xmlPath = "C:/Users/Zero/AppData/Local/HelloWorld/UserDefault.xml";
 };
 
 #endif

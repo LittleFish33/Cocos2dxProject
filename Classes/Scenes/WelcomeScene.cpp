@@ -1,6 +1,7 @@
 #include "WelcomeScene.h"
 #include "SimpleAudioEngine.h"
 #include "GameSettingScene.h"
+#include "RankListScene.h"
 using namespace CocosDenshion;
 USING_NS_CC;
 
@@ -73,7 +74,7 @@ bool WelcomeScene::init()
 		CC_CALLBACK_1(WelcomeScene::startGameCallback, this));
 
 	//startItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 + 20));
-	startItem->setPosition(Vec2(800, 300));
+	startItem->setPosition(Vec2(800, 350));
 	
 #pragma endregion
 
@@ -85,7 +86,7 @@ bool WelcomeScene::init()
 		CC_CALLBACK_1(WelcomeScene::settingGameCallback, this)
 	);
 	//settingItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 60));
-	settingItem->setPosition(Vec2(800, 210));
+	settingItem->setPosition(Vec2(800, 260));
 
 #pragma endregion
 
@@ -96,12 +97,25 @@ bool WelcomeScene::init()
 		"button/close-selected.png",
 		CC_CALLBACK_1(WelcomeScene::menuCloseCallback, this));
 
-	closeItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 140));
-	closeItem->setPosition(Vec2(800, 120));
+	//closeItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 140));
+	closeItem->setPosition(Vec2(800, 170));
 
 #pragma endregion
 
-	auto menu = Menu::create(startItem, closeItem, settingItem,  NULL);
+/* 对打部分新加排行榜界面 请美工优化 */
+#pragma region 排行榜按钮
+
+	auto rankListItem = MenuItemImage::create(
+		"button/close-normal.png",
+		"button/close-selected.png",
+		CC_CALLBACK_1(WelcomeScene::rankListCallback, this));
+
+	//rankListItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 200));
+	rankListItem->setPosition(Vec2(800, 80));
+
+#pragma endregion
+
+	auto menu = Menu::create(startItem, closeItem, settingItem, rankListItem,  NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
     return true;
@@ -137,6 +151,17 @@ void WelcomeScene::settingGameCallback(Ref * pSender)
 	auto replacescene = CCTransitionFade::create(t, newScene);
 	Director::sharedDirector()->replaceScene(replacescene);
 
+}
+
+/* 排行榜调用函数 */
+void WelcomeScene::rankListCallback(Ref * pSender)
+{
+	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+
+	float t = 0.8f;
+	auto newScene = RankListScene::createScene();
+	auto replacescene = CCTransitionFade::create(t, newScene);
+	Director::sharedDirector()->replaceScene(replacescene);
 }
 
 
