@@ -9,8 +9,19 @@ void PlayerSprite::initSprite(std::string name, Sprite* player)
 	damage = EXAMPLE_PLAYER_DAMAGE;
 	speed = EXAMPLE_PLAYER_SPEED;
 	height = EXAMPLE_PLAYER_HEIGHT;
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + ".plist");
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + "_boom.plist");
+	try {
+		
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + ".plist");
+		
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + "_boom.plist");
+		
+	}
+	catch (exception err) {
+		log("error %s.plist", name.c_str());
+		log("error %s_boom.plist", name.c_str());
+	}
+	log("loaded texture");
+
 	charactor = new Charactor(name);
 }
 /* 预设置动画帧的值 */
@@ -207,6 +218,7 @@ void PlayerSprite::moveLeft()
 	if (isRun) {
 		return;
 	}
+	isMove = true;
 	auto animation = Animation::createWithSpriteFrames(runVector, 0.09f);
 	auto animate = Animate::create(animation);
 	auto MoveAnimate = RepeatForever::create(animate);
@@ -229,6 +241,7 @@ void PlayerSprite::moveRight()
 	if (isRun) {
 		return;
 	}
+	isMove = true;
 	auto animation = Animation::createWithSpriteFrames(runVector, 0.09f);
 	auto animate = Animate::create(animation);
 	auto MoveAnimate = RepeatForever::create(animate);
@@ -447,6 +460,7 @@ void PlayerSprite::dashLeft(Vec2 oppoentPosition)
 	if (isRun) {
 		return;
 	}
+	isMove = true;
 	setFlippedX(false);
 	physicPlayer->getPhysicsBody()->setVelocity(Vec2(-800,0));
 	auto animation = Animation::createWithSpriteFrames(dashVector, 0.09f, 0);
@@ -462,6 +476,7 @@ void PlayerSprite::dashRight(Vec2 oppoentPosition)
 	if (isRun) {
 		return;
 	}
+	isMove = true;
 	setFlippedX(true);
 	physicPlayer->getPhysicsBody()->setVelocity(Vec2(800, 0));
 	auto animation = Animation::createWithSpriteFrames(dashVector, 0.09f, 0);
@@ -553,7 +568,7 @@ void PlayerSprite::defend() {
 
 /* 蓄力 */
 void PlayerSprite::charge() {
-	if (isRun) {
+	if (getActionByTag(0) == NULL) {
 		return;
 	}
 	auto end = CallFuncN::create([&](Ref* sender) {

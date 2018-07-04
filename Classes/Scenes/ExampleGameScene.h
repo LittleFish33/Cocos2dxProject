@@ -48,7 +48,13 @@ public:
 	void hit(float dt);
 	void gameOver();
 	void isCharge(float dt); /* 是否集气 */
-	void updateHP_MP(float delay);
+	void updateHP_MP(float delay); /*判断 mp hp的变化*/
+
+	/*在游戏结束时，利用一次性监听器，延迟切换*/
+	void CallGameOverScene(float dt);
+
+	/* 倒计时update与倒计时相应函数 */
+	void updateCountDown(float delay);
 
 	void RightKeyPressed();
 	void RightKeyPressed(float t);
@@ -72,12 +78,42 @@ public:
 	Sprite* createChargeEffect(PlayerSprite* player);
 	/*生成被击打效果*/
 	void createHitEffect(PlayerSprite* player);
+	/* 设置背景音乐打开或者关闭 */
+	void VoicePauseSelectedCallback(Ref * pSender);
+	/*设置游戏暂停*/
+	void playOrPauseCallback(Object * pSender);
 
 
 	/* implement the "static create()" method manually */
     CREATE_FUNC(ExampleGameScene);
 
 private:
+	/* 倒计时组件 */
+	int totalTime;
+	cocos2d::Label* countDown;
+	Sprite* round1;
+	Sprite* one;
+	Sprite* two;
+	Sprite* three;
+	Sprite* go;
+	bool bothCanmove;
+	bool isBreak;
+
+	/* 名字 */
+	cocos2d::Label* player1Name;
+	cocos2d::Label* player2Name;
+	cocos2d::Label* vs;
+
+	/* 胜负 */
+	cocos2d::Label* winLabel;
+	/* 蓄力中断判断 */
+	bool yIsBreak;
+	bool fiveIsBreak;
+
+	/* 爆裂帧动画 */
+	void explosion();
+	cocos2d::Vector<SpriteFrame*> explore;
+
 	PhysicsWorld * m_world;
 	Size visibleSize;
 	/* 地面和玩家 */
@@ -98,6 +134,13 @@ private:
 
 	__int64 player1LastHit, player2LastHit;
 	ShareSingleton* shareInstance = ShareSingleton::GetInstance();
+
+	/*为真，正在播放*/
+	int voiceState;
+	MenuItemImage* voiceItem;
+	/*为真 正在游戏，为假暂停*/
+	int playOrPauseState;
+	MenuItemImage* playOrPauseItem;
 };
 
 #endif /* __GameScene_SCENE_H__ */
