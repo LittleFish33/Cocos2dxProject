@@ -13,7 +13,7 @@
     * 添加操作说明
     * 这个页面添加一个说明告诉玩家要输入用户名：
 
-![](http://pic.caigoubao.cc/590732/DBTemp/1213.png)
+![](http://pic.caigoubao.cc/590732/DBTemp/1213.jpg)
 
   * 邱晓裕：联网对战的入口
 
