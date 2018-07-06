@@ -1,6 +1,9 @@
 #include "WelcomeScene.h"
 #include "SimpleAudioEngine.h"
 #include "GameSettingScene.h"
+#include "ShareSingleton.h"
+#include "OnlineGameScene.h"
+#include "RankListScene.h"
 using namespace CocosDenshion;
 USING_NS_CC;
 
@@ -55,7 +58,8 @@ bool WelcomeScene::init()
 
 	auto audio = SimpleAudioEngine::getInstance();
 	/*预加载并循环播放背景音乐*/
-	audio->playBackgroundMusic("music/WelcomeSceneBgm.mp3", true);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		audio->playBackgroundMusic("music/WelcomeSceneBgm.mp3", true);
 	audio->setBackgroundMusicVolume(0.80);
 
 	/*预加载音效*/
@@ -73,7 +77,7 @@ bool WelcomeScene::init()
 		CC_CALLBACK_1(WelcomeScene::startGameCallback, this));
 
 	//startItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 + 20));
-	startItem->setPosition(Vec2(800, 300));
+	startItem->setPosition(Vec2(500, 250));
 	
 #pragma endregion
 
@@ -85,7 +89,7 @@ bool WelcomeScene::init()
 		CC_CALLBACK_1(WelcomeScene::settingGameCallback, this)
 	);
 	//settingItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 60));
-	settingItem->setPosition(Vec2(800, 210));
+	settingItem->setPosition(Vec2(800, 250));
 
 #pragma endregion
 
@@ -97,11 +101,35 @@ bool WelcomeScene::init()
 		CC_CALLBACK_1(WelcomeScene::menuCloseCallback, this));
 
 	closeItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 140));
-	closeItem->setPosition(Vec2(800, 120));
+	closeItem->setPosition(Vec2(650, 80));
 
 #pragma endregion
 
-	auto menu = Menu::create(startItem, closeItem, settingItem,  NULL);
+#pragma region 排行榜按钮
+
+	auto rankListItem = MenuItemImage::create(
+		"button/ranklist-normal.png",
+		"button/ranklist-selected.png",
+		CC_CALLBACK_1(WelcomeScene::rankListCallback, this));
+
+	//rankListItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 200));
+	rankListItem->setPosition(Vec2(800, 170));
+
+#pragma endregion
+
+#pragma region 联网按钮
+
+	auto onlineItem = MenuItemImage::create(
+		"button/online-normal.png",
+		"button/online-selected.png",
+		CC_CALLBACK_1(WelcomeScene::onlineCallback, this));
+
+	//rankListItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 200));
+	onlineItem->setPosition(Vec2(500, 170));
+
+#pragma endregion
+
+	auto menu = Menu::create(startItem, closeItem, settingItem, rankListItem, onlineItem, NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
     return true;
@@ -110,7 +138,8 @@ bool WelcomeScene::init()
 /* 关闭游戏 */
 void WelcomeScene::menuCloseCallback(Ref* pSender)
 {
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	Director::getInstance()->end();
 
     #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
@@ -120,7 +149,8 @@ void WelcomeScene::menuCloseCallback(Ref* pSender)
 
 void WelcomeScene::startGameCallback(Ref* pSender)
 {
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	
 	float t = 0.8f;
 	auto newScene = SelectRoleScene::createScene();
@@ -130,13 +160,32 @@ void WelcomeScene::startGameCallback(Ref* pSender)
 
 void WelcomeScene::settingGameCallback(Ref * pSender)
 {
-	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+	if (ShareSingleton::GetInstance()->controlVoice)
+		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	
 	float t = 0.8f;
 	auto newScene = GameSettingScene::createScene();
 	auto replacescene = CCTransitionFade::create(t, newScene);
 	Director::sharedDirector()->replaceScene(replacescene);
 
+}
+
+/* 排行榜调用函数 */
+void WelcomeScene::rankListCallback(Ref * pSender)
+{
+	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+
+	float t = 0.8f;
+	auto newScene = RankListScene::createScene();
+	auto replacescene = CCTransitionFade::create(t, newScene);
+	Director::sharedDirector()->replaceScene(replacescene);
+}
+
+void WelcomeScene::onlineCallback(Ref* pSender) {
+	float t = 0.8f;
+	auto newScene = OnlineGameScene::createScene();
+	auto replacescene = CCTransitionFade::create(t, newScene);
+	Director::sharedDirector()->replaceScene(replacescene);
 }
 
 

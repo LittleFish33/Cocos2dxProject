@@ -44,6 +44,7 @@ public:
 	char* getBoomStr1() { return (char*)boomStr1.data(); }
 	char* getBoomStr2() { return (char*)boomStr2.data(); }
 	char* getRangedBallStr() { return (char*)rangedBallStr.data(); }
+	string getName() { return name; }
 
 	int getIdleNum() { return idleNum; }
 	int getRunNum() { return runNum; }

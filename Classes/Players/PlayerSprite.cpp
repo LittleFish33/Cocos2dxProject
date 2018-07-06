@@ -9,6 +9,14 @@ void PlayerSprite::initSprite(std::string name, Sprite* player)
 	damage = EXAMPLE_PLAYER_DAMAGE;
 	speed = EXAMPLE_PLAYER_SPEED;
 	height = EXAMPLE_PLAYER_HEIGHT;
+	try {
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + ".plist");
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + "_boom.plist");
+	}
+	catch (exception err) {
+		log("error %s.plist", name.c_str());
+		log("error %s_boom.plist", name.c_str());
+	}
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + ".plist");
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + "_boom.plist");
 	charactor = new Charactor(name);
@@ -383,12 +391,18 @@ void PlayerSprite::hit()
 	if (isRun) {
 		return;
 	}
-	if (hittedCount < 3) {
-		if (hp >= 5) {
-			hp -= 5;
+	if (abs(getPositionX()) < 30.0 || abs(getPositionX() - 1022.0) < 30.0 || hittedCount < 3) {
+		hittedCount %= 3;
+		if (isDefend) {
+			isDefend = false;
 		}
 		else {
-			hp = 0;
+			if (hp >= 5) {
+				hp -= 5;
+			}
+			else {
+				hp = 0;
+			}
 		}
 		auto begin = CallFuncN::create([&](Ref* sender) {
 			isHitted = true;
@@ -417,6 +431,9 @@ void PlayerSprite::dead()
 {
 	stopAllActions();
 	isDead = true;
+	if (charactor->getName() == "Vegeta") {
+		setPosition(getPosition() - Vec2(0, 30));
+	}
 	auto animation = Animation::createWithSpriteFrames(deadVector, 0.25f);
 	auto animate = Animate::create(animation);
 	animate->setOriginalTarget(false);
@@ -433,13 +450,22 @@ void PlayerSprite::hitByUltimate()
 	else {
 		hp = 0;
 	}
-	stopAllActions();
+	isDefend = false;
+	auto begin = CallFuncN::create([&](Ref* sender) {
+		ishitByUltimate = true;
+	});
+
 	auto animation = Animation::createWithSpriteFrames(deadVector, 0.25f);
 	auto animate = Animate::create(animation);
 	auto end = CallFuncN::create([&](Ref* sender) {;
-		idle();
+	idle();
+	ishitByUltimate = false;
 	});
-	auto seq = Sequence::create(animate, DelayTime::create(0.2f), end, NULL);
+
+	/* seq 的作用相当于 animate 动作延迟 2f 执行 end 动作 */
+	auto seq = Sequence::create(begin, animate, DelayTime::create(0.2f), end, NULL);
+	stopAllActions();
+	stopActionByTag(3);
 	runAction(seq);
 }
 
@@ -478,6 +504,9 @@ void PlayerSprite::dashRight(Vec2 oppoentPosition)
 void PlayerSprite::win() {
 	stopAllActions();
 	isWin = true;
+	if (charactor->getName() == "Goku") {
+		setPosition(getPosition() + Vec2(0, 70));
+	}
 	auto animation = Animation::createWithSpriteFrames(winVector, 0.25f);
 	auto animate = Animate::create(animation);
 	animate->setOriginalTarget(false);
@@ -547,6 +576,7 @@ void PlayerSprite::defend() {
 	if (isRun) {
 		return;
 	}
+	isDefend = true;
 	auto animation = Animation::createWithSpriteFrames(defendVector, 0.09f);
 	auto animate = Animate::create(animation);
 	auto act = RepeatForever::create(animate);

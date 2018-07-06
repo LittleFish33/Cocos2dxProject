@@ -1,13 +1,15 @@
 #include "ExampleGameScene.h"
 #include "SimpleAudioEngine.h"
 #include "GamePauseScene.h"
+#include "GameOverScene.h"
 #include "../configuration.h"
 #include "../ShareSingleton.h"
 #include "../Players/PlayerSprite.h"
-using namespace CocosDenshion;
 #include <iostream>
 #include <cmath>
 #include <ctime>
+#define database UserDefault::getInstance()
+using namespace CocosDenshion;
 USING_NS_CC;
 /*
 *  tag    动画
@@ -80,7 +82,7 @@ bool ExampleGameScene::init()
 	int selectedBg = ShareSingleton::GetInstance()->selectedBackground;
 	char bgName[20];
 	sprintf(bgName, "bg/bg%d.png", selectedBg);
-	auto bgSprite = Sprite::create("bg/bg4.png");
+	auto bgSprite = Sprite::create(bgName);
 	bgSprite->setPosition(visibleSize / 2);
 	bgSprite->setScale(visibleSize.width / bgSprite->getContentSize().width, visibleSize.height / bgSprite->getContentSize().height);
 	this->addChild(bgSprite, 0);
@@ -103,12 +105,23 @@ bool ExampleGameScene::init()
 #pragma endregion
 	
 #pragma region 创建精灵
-	/* Todo：创建精灵的人需要修改一下这里的初始帧 */
-	/* 创建一张贴图，使用贴图创建精灵 */
+	isFreiza = false;
+	/*注 player1 在右边，使用数字键盘； player2 在左边，使用字母键盘*/
+
+	string Player1Name = ShareSingleton::GetInstance()->player1;
+	string Player2Name = ShareSingleton::GetInstance()->player2;
+
 	player1 = new PlayerSprite();
 
 	/* 添加player1的物理刚体 */
-	physicPlayer1 = Sprite::create("physicplayer.png");
+	if (Player1Name == "Frieza") {
+		/* 弗利萨的尾巴问题，所以得换个刚体绑定 */
+		physicPlayer1 = Sprite::create("physicplayerForFrieza.png");
+		isFreiza = true;
+	}
+	else {
+		physicPlayer1 = Sprite::create("physicplayer.png");
+	}
 	physicPlayer1->setPosition(Vec2(visibleSize.width / 4 * 3, visibleSize.height / 2 - 300));
 	auto player1Body = PhysicsBody::createBox(physicPlayer1->getContentSize(), PhysicsMaterial(10000.0f, 0.0f, 0.0f));
 	player1Body->setCategoryBitmask(0xFFFFFFFF);
@@ -116,21 +129,29 @@ bool ExampleGameScene::init()
 	player1Body->setContactTestBitmask(0xFFFFFFFF);
 	player1Body->setDynamic(true);
 	physicPlayer1->setPhysicsBody(player1Body);
-	physicPlayer1->setVisible(false);
+	physicPlayer1->setVisible(true);
 	physicPlayer1->setScale(1.2f);
 	addChild(physicPlayer1, 3);
 
-	player1->initSprite("Goku", physicPlayer1);
+	player1->initSprite(Player1Name, physicPlayer1);
 	player1->initAnimateFrame();
 	player1->setPosition(Vec2(visibleSize.width / 4 * 3, visibleSize.height / 2 - 300));
-	player1->setFlippedX(true);
+	player1->setFlippedX(false);
 	player1->setVisible(true);
 	addChild(player1, 3);
 	player1->idle();
 
 	player2 = new PlayerSprite();
 	/* 添加player2的物理刚体 */
-	physicPlayer2 = Sprite::create("physicplayer.png");
+	if (Player2Name == "Frieza") {
+		/* 弗利萨的尾巴问题，所以得换个刚体绑定 */
+		physicPlayer2 = Sprite::create("physicplayerForFrieza.png");
+		isFreiza = true;
+	}
+	else {
+		physicPlayer2 = Sprite::create("physicplayer.png");
+	}
+	//physicPlayer2 = Sprite::create("physicplayer.png");
 	physicPlayer2->setPosition(Vec2(visibleSize.width / 4, visibleSize.height / 2 - 300));
 	auto player2Body = PhysicsBody::createBox(physicPlayer2->getContentSize(), PhysicsMaterial(10000.0f, 0.0f, 0.0f));
 	player2Body->setCategoryBitmask(0xFFFFFFFF);
@@ -138,11 +159,11 @@ bool ExampleGameScene::init()
 	player2Body->setContactTestBitmask(0xFFFFFFFF);
 	player2Body->setDynamic(true);
 	physicPlayer2->setPhysicsBody(player2Body);
-	physicPlayer2->setVisible(false);
+	physicPlayer2->setVisible(true);
 	physicPlayer2->setScale(1.2f);
 	addChild(physicPlayer2, 3);
 
-	player2->initSprite("Kid_Buu", physicPlayer2);
+	player2->initSprite(Player2Name, physicPlayer2);
 	player2->initAnimateFrame();
 	player2->setPosition(Vec2(visibleSize.width / 4, visibleSize.height / 2 - 300));
 	player2->setFlippedX(true);
@@ -155,79 +176,94 @@ bool ExampleGameScene::init()
 
 #pragma region hp条和mp条
 
-	/* Todo：请美工在这里优化HP条和MP条 */
-	/* Player1的Hp */
-	Sprite* player1hpBorder = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(0, 320, 420, 47)));
-	Sprite* player1hpContent = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(610, 362, 4, 16)));
-
-	//Sprite* player1hpBorder = Sprite::create("hp1.png");
-//	Sprite* player1hpContent = Sprite::create("hp2.png");
-
+	/* Player1的Hp， 右边 */
+	Sprite* player1hpAndmpBorder = Sprite::create("Player2Border.png");
+	Sprite* player1hpContent = Sprite::create("hp-new.png");
+	/* Player1的Mp */
+	Sprite* player1mpContent = Sprite::create("mp-new.png");
 	player1Hp = ProgressTimer::create(player1hpContent);
 	player1Hp->setScaleX(90);
-	player1Hp->setAnchorPoint(Vec2(0, 0));
+	player1Hp->setAnchorPoint(Vec2(1, 0));
 	player1Hp->setType(ProgressTimerType::BAR);
 	player1Hp->setBarChangeRate(Point(1, 0));
-	player1Hp->setMidpoint(Point(0, 1));
-	player1Hp->setPercentage(100);
-	player1Hp->setPosition(Vec2(origin.x + 14 * player1Hp->getContentSize().width + 500, origin.y + visibleSize.height - 2 * player1Hp->getContentSize().height));
+	player1Hp->setMidpoint(Point(1, 0));
+	player1Hp->setPercentage(50);
+	player1Hp->setPosition(Vec2(935, 642));
 	addChild(player1Hp, 1);
-	player1hpBorder->setAnchorPoint(Vec2(0, 0));
-	player1hpBorder->setPosition(Vec2(origin.x + player1Hp->getContentSize().width + 500, origin.y + visibleSize.height - player1hpBorder->getContentSize().height));
-	addChild(player1hpBorder, 0);
-
-	/* Player1的Mp */
-	Sprite* player1mpBorder = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(0, 320, 420, 47)));
-	Sprite* player1mpContent = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(610, 362, 4, 16)));
+	player1hpAndmpBorder->setAnchorPoint(Vec2(1, 0));
+	player1hpAndmpBorder->setPosition(Vec2(1025, 614));
+	addChild(player1hpAndmpBorder, 0);
 
 	player1Mp = ProgressTimer::create(player1mpContent);
 	player1Mp->setScaleX(90);
-	player1Mp->setAnchorPoint(Vec2(0, 0));
+	player1Mp->setAnchorPoint(Vec2(1, 0));
 	player1Mp->setType(ProgressTimerType::BAR);
 	player1Mp->setBarChangeRate(Point(1, 0));
-	player1Mp->setMidpoint(Point(0, 1));
-	player1Mp->setPercentage(50);
-	player1Mp->setPosition(Vec2(origin.x + 14 * player1Mp->getContentSize().width + 500, origin.y + visibleSize.height - 2 * player1Mp->getContentSize().height - 100));
+	player1Mp->setMidpoint(Point(1, 0));
+	player1Mp->setPercentage(60);
+	player1Mp->setPosition(Vec2(935, 625));
 	addChild(player1Mp, 1);
-	player1mpBorder->setAnchorPoint(Vec2(0, 0));
-	player1mpBorder->setPosition(Vec2(origin.x + player1Mp->getContentSize().width + 500, origin.y + visibleSize.height - player1mpBorder->getContentSize().height - 100));
-	addChild(player1mpBorder, 0);
+
 
 	/* Player2的Hp */
-	Sprite* player2hpBorder = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(0, 320, 420, 47)));
-	Sprite* player2hpContent = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(610, 362, 4, 16)));
-
+	Sprite* player2hpAndmpBorder = Sprite::create("Player1Border.png");
+	Sprite* player2hpContent = Sprite::create("hp-new.png");
+	/* Player2的Mp */
+	Sprite* player2mpContent = Sprite::create("mp-new.png");
 	player2Hp = ProgressTimer::create(player2hpContent);
 	player2Hp->setScaleX(90);
 	player2Hp->setAnchorPoint(Vec2(0, 0));
 	player2Hp->setType(ProgressTimerType::BAR);
 	player2Hp->setBarChangeRate(Point(1, 0));
 	player2Hp->setMidpoint(Point(0, 1));
-	player2Hp->setPercentage(100);
-	player2Hp->setPosition(Vec2(origin.x + 14 * player2Hp->getContentSize().width, origin.y + visibleSize.height - 2 * player2Hp->getContentSize().height));
-	//player2Hp->setPosition(Vec2(100,100));
+	player2Hp->setPercentage(10);
+	player2Hp->setPosition(Vec2(90, 642));
 	addChild(player2Hp, 1);
-	player2hpBorder->setAnchorPoint(Vec2(0, 0));
-	player2hpBorder->setPosition(Vec2(origin.x + player2Hp->getContentSize().width, origin.y + visibleSize.height - player2hpBorder->getContentSize().height));
-	//player2hpBorder->setPosition(Vec2(300, 300));
-	addChild(player2hpBorder, 0);
-
-	/* Player2的Mp */
-	Sprite* player2mpBorder = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(0, 320, 420, 47)));
-	Sprite* player2mpContent = Sprite::create("hp.png", CC_RECT_PIXELS_TO_POINTS(Rect(610, 362, 4, 16)));
+	player2hpAndmpBorder->setAnchorPoint(Vec2(0, 0));
+	player2hpAndmpBorder->setPosition(Vec2(0, 614));
+	addChild(player2hpAndmpBorder, 0);
 
 	player2Mp = ProgressTimer::create(player2mpContent);
 	player2Mp->setScaleX(90);
 	player2Mp->setAnchorPoint(Vec2(0, 0));
 	player2Mp->setType(ProgressTimerType::BAR);
 	player2Mp->setBarChangeRate(Point(1, 0));
-	player2Mp->setMidpoint(Point(0, 1));
-	player2Mp->setPercentage(50);
-	player2Mp->setPosition(Vec2(origin.x + 14 * player2Mp->getContentSize().width, origin.y + visibleSize.height - 2 * player2Mp->getContentSize().height - 100));
+	player2Mp->setMidpoint(Point(0, 1));  ///  从左到右显示进度条
+	player2Mp->setPercentage(20);
+	player2Mp->setPosition(Vec2(90, 625));
+	//player1Mp->setPosition(Vec2(origin.x + 14 * player1Mp->getContentSize().width + 500, origin.y + visibleSize.height - 2 * player1Mp->getContentSize().height - 100));
 	addChild(player2Mp, 1);
-	player2mpBorder->setAnchorPoint(Vec2(0, 0));
-	player2mpBorder->setPosition(Vec2(origin.x + player2Mp->getContentSize().width, origin.y + visibleSize.height - player2mpBorder->getContentSize().height - 100));
-	addChild(player2mpBorder, 0);
+
+#pragma endregion
+
+#pragma region  添加游戏人物头像到信息框，以及显示人物姓名
+
+	auto player1Icon = Sprite::create("role/" + Player1Name + "-icon.png");
+	auto player2Icon = Sprite::create("role/" + Player2Name + "-icon.png");
+
+	player1Icon->setAnchorPoint(Vec2(1, 0));
+	player2Icon->setAnchorPoint(Vec2(0, 0));
+	player1Icon->setPosition(Vec2(1012, 631));
+	player2Icon->setPosition(Vec2(12, 631));
+
+	addChild(player1Icon, 0);
+	addChild(player2Icon, 0);
+
+
+	player1Name = Label::createWithTTF(ShareSingleton::GetInstance()->user1.c_str(), "fonts/comicsansms.ttf", 20);
+	player1Name->setAnchorPoint(Vec2(1, 0));
+	player1Name->setPosition(Vec2(935, 660));
+	player1Name->setColor(Color3B(0, 0, 0));
+	addChild(player1Name, 1);
+	player2Name = Label::createWithTTF(ShareSingleton::GetInstance()->user2.c_str(), "fonts/comicsansms.ttf", 20);
+	player2Name->setAnchorPoint(Vec2(0, 0));
+	player2Name->setPosition(Vec2(90, 660));
+	player2Name->setColor(Color3B(0, 0, 0));
+	addChild(player2Name, 1);
+
+	vs = Label::createWithTTF("VS", "fonts/comicsansms.ttf", 60);
+	vs->setPosition(visibleSize.width / 2, visibleSize.height / 2 + 200);
+	vs->setColor(Color3B(255, 255, 0));
 
 #pragma endregion
 
@@ -237,15 +273,17 @@ bool ExampleGameScene::init()
 	auto audio = SimpleAudioEngine::getInstance();
 	/*预加载并循环播放背景音乐*/
 	//	audio->preloadBackgroundMusic("music/WelcomeSceneBackground.mp3");  
-	audio->playBackgroundMusic("music/MainGameSceneBgm.mp3", true);
-	audio->setBackgroundMusicVolume(0.80);
+	if (ShareSingleton::GetInstance()->controlVoice) {
+		audio->playBackgroundMusic("music/MainGameSceneBgm.mp3", true);
+		audio->setBackgroundMusicVolume(0.80);
 
-	/*预加载点击音效*/
-	audio->preloadEffect("music/ClickCamera.wav");
-	audio->setEffectsVolume(0.80);
+		/*预加载点击音效*/
+		audio->preloadEffect("music/ClickCamera.wav");
+		audio->setEffectsVolume(0.80);
 
-	/*加载并播放 3 2 1 开始 音乐*/
-	audio->playEffect("music/321.mp3", false, 1.0f, 0.0f, 1.0f);
+		/*加载并播放 3 2 1 开始 音乐*/
+		audio->playEffect("music/321.mp3", false, 1.0f, 0.0f, 1.0f);
+	}
 
 #pragma endregion
 
@@ -269,12 +307,12 @@ bool ExampleGameScene::init()
 	/*游戏暂停按钮 */
 	playOrPauseState = 1;
 	playOrPauseItem = MenuItemImage::create(
-			"button/play.png",
-			"button/pause.png",
-			CC_CALLBACK_1(ExampleGameScene::playOrPauseCallback, this)
-		);
+		"button/play.png",
+		"button/pause.png",
+		CC_CALLBACK_1(ExampleGameScene::playOrPauseCallback, this)
+	);
 	playOrPauseItem->setPosition(ccp(visibleSize.width - playOrPauseItem->getContentSize().width / 2,
-		visibleSize.height/2 - playOrPauseItem->getContentSize().height / 2));
+		visibleSize.height / 2 - playOrPauseItem->getContentSize().height / 2));
 	//playOrPauseItem->setPosition(Vec2(480, 70));
 	auto playOrPauseMenu = Menu::create(playOrPauseItem, NULL);
 	playOrPauseMenu->setPosition(Vec2::ZERO);
@@ -308,23 +346,53 @@ bool ExampleGameScene::init()
 
 #pragma region 测试动画用按钮------邵梓硕
 
-	auto label = Label::createWithTTF("hit", "fonts/arial.ttf", 24);
+	/*auto label = Label::createWithTTF("win", "fonts/arial.ttf", 24);
 
 	auto changeItem = MenuItemLabel::create(label, CC_CALLBACK_1(ExampleGameScene::hitTest, this));
 	auto menu = Menu::create(changeItem, NULL);
 	menu->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-	menu->setVisible(false);
-	addChild(menu, 2);
+	menu->setVisible(true);
+	addChild(menu, 2);*/
 
-	auto label2 = Label::createWithTTF("dead", "fonts/arial.ttf", 24);
+	/*auto label2 = Label::createWithTTF("dead", "fonts/arial.ttf", 24);
 
 	auto changeItem2 = MenuItemLabel::create(label2, CC_CALLBACK_1(ExampleGameScene::deadTest, this));
 	auto menu2 = Menu::create(changeItem2, NULL);
 	menu2->setPosition(visibleSize.width / 2 + 50, visibleSize.height / 2);
 	menu2->setVisible(false);
-	addChild(menu2, 2);
+	addChild(menu2, 2);*/
 
 #pragma endregion
+
+	//--------------------------------------------------------------------------------------------------------------------------------------------------------
+#pragma region 创建倒计时
+	totalTime = 122;
+	schedule(schedule_selector(ExampleGameScene::updateCountDown), 1);
+
+#pragma endregion
+
+#pragma region 三秒回合图标和123倒计时
+	bothCanmove = false;
+	round1 = Sprite::create("round1.png");
+	round1->setPosition(Vec2(origin.x + 14 * player2Mp->getContentSize().width + 455,
+		origin.y + visibleSize.height - 2 * player2Mp->getContentSize().height - 20));
+	addChild(round1, 3);
+	three = Sprite::create("3.png");
+	three->setPosition(Vec2(origin.x + 14 * player2Mp->getContentSize().width + 455
+		, origin.y + visibleSize.height - 2 * player2Mp->getContentSize().height - 200));
+	addChild(three, 3);
+	isBreak = false;
+#pragma endregion
+
+	yIsBreak = false;
+	fiveIsBreak = false;
+	/* 爆裂帧动画 */
+	explosion();
+
+
+	//addChild(vs, 1);
+	//--------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
     return true;
 }
@@ -332,6 +400,22 @@ bool ExampleGameScene::init()
 /* 碰撞发生函数 */
 bool ExampleGameScene::onConcactBegin(PhysicsContact & contact)
 {
+	if (player1->getActionByTag(12) != nullptr) {
+		player1->stopActionByTag(12);
+		if (chargeEffect1 != NULL) {
+			chargeEffect1->removeFromParentAndCleanup(true);
+			chargeEffect1 = NULL;
+		}
+		player1->idle();
+	}
+	if (player2->getActionByTag(12) != nullptr) {
+		player2->stopActionByTag(12);
+		if (chargeEffect2 != NULL) {
+			chargeEffect2->removeFromParentAndCleanup(true);
+			chargeEffect2 = NULL;
+		}
+		player2->idle();
+	}
 	return true;
 }
 
@@ -356,174 +440,373 @@ bool ExampleGameScene::onContactSeparate(PhysicsContact & contact)
 void ExampleGameScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
 {
 
-	if (chargeEffect1 != NULL) {
-		chargeEffect1->removeFromParentAndCleanup(true);
-		chargeEffect1 = NULL;
-	}
-	if (chargeEffect2 != NULL) {
-		chargeEffect2->removeFromParentAndCleanup(true);
-		chargeEffect2 = NULL;
-	}
-	switch (code) {
-	case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-		LeftKeyPressed();
-		LeftKeyState = true;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-		RightKeyPressed();
-		RightKeyState = true;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
-		player1->jump();
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-		player1->defend();
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_1:
-		if (player1->getActionByTag(6) == nullptr) {
-			One_KeyPressed();
-			player1LastHit = time(NULL);
+	if (bothCanmove) {
+		switch (code) {
+		case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			if (fiveIsBreak == false) {
+				if (player1->getActionByTag(12) != nullptr) {
+					player1->stopActionByTag(12);
+					if (chargeEffect1 != NULL) {
+						chargeEffect1->removeFromParentAndCleanup(true);
+						chargeEffect1 = NULL;
+					}
+				}
+			}
+			fiveIsBreak = true;
+			LeftKeyPressed();
+			LeftKeyState = true;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+			if (fiveIsBreak == false) {
+				if (player1->getActionByTag(12) != nullptr) {
+					player1->stopActionByTag(12);
+					if (chargeEffect1 != NULL) {
+						chargeEffect1->removeFromParentAndCleanup(true);
+						chargeEffect1 = NULL;
+					}
+				}
+			}
+			fiveIsBreak = true;
+			RightKeyPressed();
+			RightKeyState = true;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
+			if (fiveIsBreak == false) {
+				if (player1->getActionByTag(12) != nullptr) {
+					player1->stopActionByTag(12);
+					if (chargeEffect1 != NULL) {
+						chargeEffect1->removeFromParentAndCleanup(true);
+						chargeEffect1 = NULL;
+					}
+				}
+			}
+			fiveIsBreak = true;
+			player1->jump();
+			UPKeyState = true;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+			if (FIVEKeyState) {
+				player1->stopActionByTag(12);
+				if (chargeEffect1 != NULL) {
+					chargeEffect1->removeFromParentAndCleanup(true);
+					chargeEffect1 = NULL;
+				}
+				FIVEKeyState = false;
+			}
+			if (fiveIsBreak == false) {
+				if (player1->getActionByTag(12) != nullptr) {
+					player1->stopActionByTag(12);
+					if (chargeEffect1 != NULL) {
+						chargeEffect1->removeFromParentAndCleanup(true);
+						chargeEffect1 = NULL;
+					}
+				}
+			}
+			fiveIsBreak = false;
+			player1->defend();
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_1:
+			if (fiveIsBreak == false) {
+				if (player1->getActionByTag(12) != nullptr) {
+					player1->stopActionByTag(12);
+					if (chargeEffect1 != NULL) {
+						chargeEffect1->removeFromParentAndCleanup(true);
+						chargeEffect1 = NULL;
+					}
+				}
+			}
+			fiveIsBreak = true;
+			if (player1->getActionByTag(6) == nullptr && !player1->isHitted && !player2->isHitting) {
+				player1LastHit = time(NULL);
+				One_KeyPressed();
+			}
+			DOWNKeyState = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_2:
+			if (fiveIsBreak == false) {
+				if (player1->getActionByTag(12) != nullptr) {
+					player1->stopActionByTag(12);
+					if (chargeEffect1 != NULL) {
+						chargeEffect1->removeFromParentAndCleanup(true);
+						chargeEffect1 = NULL;
+					}
+				}
+			}
+			fiveIsBreak = true;
+			createRangedBall(player1, true);
+			player1->rangedAttack();
+			DOWNKeyState = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_3:
+			if (fiveIsBreak == false) {
+				if (player1->getActionByTag(12) != nullptr) {
+					player1->stopActionByTag(12);
+					if (chargeEffect1 != NULL) {
+						chargeEffect1->removeFromParentAndCleanup(true);
+						chargeEffect1 = NULL;
+					}
+				}
+			}
+			fiveIsBreak = true;
+			createUltimateBall(player1, true);
+			if (!player1->ishitByUltimate) {
+				player1->ultimate();
+			}
+			DOWNKeyState = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_5:
+			if (DOWNKeyState) {
+				player1->stopActionByTag(11);
+				//CCLOG("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+				DOWNKeyState = false;
+			}
+			if (fiveIsBreak == false) {
+				chargeEffect1 = createChargeEffect(player1);
+				player1->charge();
+			}
+			FIVEKeyState = true;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_A:
+			if (yIsBreak == false) {
+				if (player2->getActionByTag(12) != nullptr) {
+					player2->stopActionByTag(12);
+					if (chargeEffect2 != NULL) {
+						chargeEffect2->removeFromParentAndCleanup(true);
+						chargeEffect2 = NULL;
+					}
+				}
+			}
+			yIsBreak = true;
+			A_KeyPressed();
+			A_KeyState = true;
+			S_KeyState = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_D:
+			if (yIsBreak == false) {
+				if (player2->getActionByTag(12) != nullptr) {
+					player2->stopActionByTag(12);
+					if (chargeEffect2 != NULL) {
+						chargeEffect2->removeFromParentAndCleanup(true);
+						chargeEffect2 = NULL;
+					}
+				}
+			}
+			yIsBreak = true;
+			D_KeyPressed();
+			D_KeyState = true;
+			S_KeyState = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_W:
+			if (yIsBreak == false) {
+				if (player2->getActionByTag(12) != nullptr) {
+					player2->stopActionByTag(12);
+					if (chargeEffect2 != NULL) {
+						chargeEffect2->removeFromParentAndCleanup(true);
+						chargeEffect2 = NULL;
+					}
+				}
+			}
+			yIsBreak = true;
+			W_KeyState = true;
+			player2->jump();
+			S_KeyState = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_S:
+			if (yIsBreak == false) {
+				if (player2->getActionByTag(12) != nullptr) {
+					player2->stopActionByTag(12);
+					if (chargeEffect2 != NULL) {
+						chargeEffect2->removeFromParentAndCleanup(true);
+						chargeEffect2 = NULL;
+					}
+				}
+			}
+			yIsBreak = true;
+			player2->defend();
+			S_KeyState = true;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_G:
+			if (yIsBreak == false) {
+				if (player2->getActionByTag(12) != nullptr) {
+					player2->stopActionByTag(12);
+					if (chargeEffect2 != NULL) {
+						chargeEffect2->removeFromParentAndCleanup(true);
+						chargeEffect2 = NULL;
+					}
+				}
+			}
+			yIsBreak = true;
+			if (player2->getActionByTag(6) == nullptr && !player2->isHitted && !player2->isHitting) {
+				player2LastHit = time(NULL);
+				G_KeyPressed();
+			}
+			S_KeyState = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_H:
+			if (yIsBreak == false) {
+				if (player2->getActionByTag(12) != nullptr) {
+					player2->stopActionByTag(12);
+					if (chargeEffect2 != NULL) {
+						chargeEffect2->removeFromParentAndCleanup(true);
+						chargeEffect2 = NULL;
+					}
+				}
+			}
+			yIsBreak = true;
+			createRangedBall(player2, false);
+			player2->rangedAttack();
+			S_KeyState = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_Y:
+			if (yIsBreak == false) {
+				chargeEffect2 = createChargeEffect(player2);
+				player2->charge();
+			}
+			S_KeyState = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_J:
+			if (yIsBreak == false) {
+				if (player2->getActionByTag(12) != nullptr) {
+					player2->stopActionByTag(12);
+					if (chargeEffect2 != NULL) {
+						chargeEffect2->removeFromParentAndCleanup(true);
+						chargeEffect2 = NULL;
+					}
+				}
+			}
+			yIsBreak = true;
+			createUltimateBall(player2, false);
+			if (!player2->ishitByUltimate) {
+				player2->ultimate();
+			}
+			S_KeyState = false;
+			break;
+		default:
+			break;
 		}
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_2:
-		createRangedBall(player1, true);
-		player1->rangedAttack();
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_3:
-		createUltimateBall(player1,true);
-		player1->ultimate();
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_5:
-		chargeEffect1 = createChargeEffect(player1);
-		player1->charge();
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_A:
-		A_KeyPressed();
-		A_KeyState = true;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_D:
-		D_KeyPressed();
-		D_KeyState = true;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_W:
-		player2->jump();
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_G:
-		if (player2->getActionByTag(6) == nullptr) {
-			player2LastHit = time(NULL);
-			G_KeyPressed();
-		}
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_H:
-		createRangedBall(player2, false);
-		player2->rangedAttack();
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_Y:
-		chargeEffect2 = createChargeEffect(player2);
-		player2->charge();
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_J:
-		createUltimateBall(player2, false);
-		player2->ultimate();
-		break;
-	default:
-		break;
 	}
 }
 
 /* 释放按键 */
 void ExampleGameScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 {
-	switch (code) {
-	case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-		player1->isMove = false;
-		player1->stopActionByTag(1);
-		if (physicPlayer1->getPhysicsBody()->getVelocity().x < 0) {
-			physicPlayer1->getPhysicsBody()->setVelocity(Vec2(0, 0));
-		}
-		/* 考虑先按1后按2，先松1的情况 */
-		if (player1->getActionByTag(2) == nullptr) {
-			player1->idle();
-		}
-		LeftKeyState = false;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-		player1->isMove = false;
-		player1->stopActionByTag(2);
-		if (physicPlayer1->getPhysicsBody()->getVelocity().x > 0) {
-			physicPlayer1->getPhysicsBody()->setVelocity(Vec2(0, 0));
-		}
-		if (player1->getActionByTag(1) == nullptr) {
-			player1->idle();
-		}
-		RightKeyState = false;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-		player1->stopActionByTag(11);
-		player1->idle();
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_1:
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_2:
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_3:
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_5:
-		if (player1->getActionByTag(12) != nullptr) {
-			player1->stopActionByTag(12);
-			if (chargeEffect1 != NULL) {
-				chargeEffect1->removeFromParentAndCleanup(true);
-				chargeEffect1 = NULL;
+	if (bothCanmove) {
+		switch (code) {
+		case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			player1->isMove = false;
+			player1->stopActionByTag(1);
+			if (physicPlayer1->getPhysicsBody()->getVelocity().x < 0) {
+				physicPlayer1->getPhysicsBody()->setVelocity(Vec2(0, 0));
 			}
-			player1->idle();
-		}
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_A:
-		player2->isMove = false;
-		player2->stopActionByTag(1);
-		if (physicPlayer2->getPhysicsBody()->getVelocity().x < 0)
-		{
-			physicPlayer2->getPhysicsBody()->setVelocity(Vec2(0, 0));
-		}
-		if (player2->getActionByTag(2) == nullptr) {
-			player2->idle();
-		}
-		A_KeyState = false;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_D:
-		player2->isMove = false;
-		player2->stopActionByTag(2);
-		if (physicPlayer2->getPhysicsBody()->getVelocity().x > 0)
-		{
-			physicPlayer2->getPhysicsBody()->setVelocity(Vec2(0, 0));
-		}
-		if (player2->getActionByTag(1) == nullptr) {
-			player2->idle();
-		}
-		D_KeyState = false;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_W:
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_G:
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_H:
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_J:
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_Y:
-		if (player2->getActionByTag(12) != nullptr) {
-			player2->stopActionByTag(12);
-			if (chargeEffect2 != NULL) {
-				chargeEffect2->removeFromParentAndCleanup(true);
-				chargeEffect2 = NULL;
+			/* 考虑先按1后按2，先松1的情况 */
+			if (player1->getActionByTag(2) == nullptr) {
+				player1->idle();
 			}
+			LeftKeyState = false;
+			fiveIsBreak = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+			player1->isMove = false;
+			player1->stopActionByTag(2);
+			if (physicPlayer1->getPhysicsBody()->getVelocity().x > 0) {
+				physicPlayer1->getPhysicsBody()->setVelocity(Vec2(0, 0));
+			}
+			if (player1->getActionByTag(1) == nullptr) {
+				player1->idle();
+			}
+			RightKeyState = false;
+			fiveIsBreak = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
+			UPKeyState = false;
+			fiveIsBreak = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+			player1->stopActionByTag(11);
+			player1->idle();
+			fiveIsBreak = false;
+			DOWNKeyState = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_1:
+			fiveIsBreak = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_2:
+			fiveIsBreak = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_3:
+			fiveIsBreak = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_5:
+			if (player1->getActionByTag(12) != nullptr) {
+				player1->stopActionByTag(12);
+				if (chargeEffect1 != NULL) {
+					chargeEffect1->removeFromParentAndCleanup(true);
+					chargeEffect1 = NULL;
+				}
+				player1->idle();
+			}
+			FIVEKeyState = false;
+			fiveIsBreak = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_A:
+			player2->isMove = false;
+			player2->stopActionByTag(1);
+			if (physicPlayer2->getPhysicsBody()->getVelocity().x < 0)
+			{
+				physicPlayer2->getPhysicsBody()->setVelocity(Vec2(0, 0));
+			}
+			if (player2->getActionByTag(2) == nullptr) {
+				player2->idle();
+			}
+			A_KeyState = false;
+			yIsBreak = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_D:
+			player2->isMove = false;
+			player2->stopActionByTag(2);
+			if (physicPlayer2->getPhysicsBody()->getVelocity().x > 0)
+			{
+				physicPlayer2->getPhysicsBody()->setVelocity(Vec2(0, 0));
+			}
+			if (player2->getActionByTag(1) == nullptr) {
+				player2->idle();
+			}
+			D_KeyState = false;
+			yIsBreak = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_W:
+			yIsBreak = false;
+			W_KeyState = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_S:
+			player2->stopActionByTag(11);
 			player2->idle();
+			yIsBreak = false;
+			S_KeyState = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_G:
+			yIsBreak = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_H:
+			yIsBreak = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_J:
+			yIsBreak = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_Y:
+			if (player2->getActionByTag(12) != nullptr) {
+				player2->stopActionByTag(12);
+				if (chargeEffect2 != NULL) {
+					chargeEffect2->removeFromParentAndCleanup(true);
+					chargeEffect2 = NULL;
+				}
+				player2->idle();
+			}
+			yIsBreak = false;
+			break;
+		default:
+			break;
 		}
-		break;
-	default:
-		break;
 	}
 }
 #pragma endregion
@@ -531,6 +814,43 @@ void ExampleGameScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 
 void ExampleGameScene::update(float delay)
 {
+	if (W_KeyState) {
+		player2->jump();
+	}
+	else if (A_KeyState) {
+
+	}
+	else if (D_KeyState) {
+
+	}
+	else {
+		if (S_KeyState)
+			player2->defend();
+	}
+
+	if (UPKeyState) {
+		player1->jump();
+	}
+	else if (LeftKeyState) {
+
+	}
+	else if (RightKeyState) {
+
+	}
+	else if (FIVEKeyState) {
+
+	}
+	else {
+		if (DOWNKeyState) {
+			//CCLOG("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx");
+			player1->defend();
+		}
+	}
+	////////////////qyh, 修复从暂停场景回退时，播放按钮没有从暂停状态恢复
+	if (ShareSingleton::GetInstance()->controlPause) {
+		playOrPauseState = 1;
+		playOrPauseItem->setNormalImage(Sprite::create("button/play.png"));
+	}
 	/* 如果是被打飞的状态，那么让刚体和精灵的位置相同 */
 	if (player1->getActionByTag(6) == nullptr) {
 		player1->setPositionX(physicPlayer1->getPositionX());
@@ -592,20 +912,126 @@ void ExampleGameScene::update(float delay)
 
 }
 
-/* Todo: 双人对战的人完成这部分的代码 */
+void ExampleGameScene::updateCountDown(float delay)
+{
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	if (totalTime == 122) {
+		three->removeFromParent();
+		two = Sprite::create("2.png");
+		two->setPosition(Vec2(origin.x + 14 * player2Mp->getContentSize().width + 455
+			, origin.y + visibleSize.height - 2 * player2Mp->getContentSize().height - 200));
+		addChild(two, 3);
+	}
+	else if (totalTime == 121) {
+		two->removeFromParent();
+		one = Sprite::create("1.png");
+		one->setPosition(Vec2(origin.x + 14 * player2Mp->getContentSize().width + 455
+			, origin.y + visibleSize.height - 2 * player2Mp->getContentSize().height - 200));
+		addChild(one, 3);
+	}
+	else if (totalTime == 120) {
+		one->removeFromParent();
+		bothCanmove = true;
+
+		countDown = Label::createWithTTF("120", "fonts/comicsansms.ttf", 48);
+		countDown->setPosition(visibleSize.width / 2, visibleSize.height / 2 + 250);
+		countDown->setColor(Color3B(0, 255, 0));
+		countDown->enableShadow();
+		addChild(countDown, 3);
+	}
+	else if (totalTime < 120) {
+		char str[10];
+		sprintf(str, "%d", totalTime); /* 将int类型转化为字符串char*类型 */
+		countDown->setString(str);
+	}
+	if (totalTime > 0)
+		totalTime--;
+	else if (totalTime == 0)
+		gameOver();
+}
+
 void ExampleGameScene::gameOver()
 {
-	
+	_eventDispatcher->removeAllEventListeners();
+	float delay = 3.0f;
+	/* 停止所有计时器操作 */
+	this->unscheduleAllSelectors();
+	string name1 = ShareSingleton::GetInstance()->user1;
+	string name2 = ShareSingleton::GetInstance()->user2;
+	int score1 = 0, score2 = 0;
+
+#pragma region WinLabel
+	winLabel = Label::createWithTTF("", "fonts/comicsansms.ttf", 108);
+	winLabel->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	winLabel->setColor(Color3B(255, 255, 255));
+	addChild(winLabel, 2);
+
+	//bothCanmove = false;
+	if (player1->getHp() > player2->getHp()) {
+		player1->win();
+		player2->dead();
+		winLabel->setString(name1 + " Win");
+		score1 += 1;
+		score2 -= 1;
+	}
+	else if (player1->getHp() < player2->getHp()) {
+		player2->win();
+		player1->dead();
+		winLabel->setString(name2 + " Win");
+		score1 -= 1;
+		score2 += 1;
+	}
+	else if (player1->getHp() == player2->getHp()) {
+		delay = 1.0f;
+		winLabel->setString("Draw!");
+	}
+#pragma endregion
+
+#pragma region 数据存储
+
+	if (!database->getBoolForKey("isExist")) {
+		database->setBoolForKey("isExist", true);
+	}
+	int one = database->getIntegerForKey(name1.c_str(), 0);
+	int two = database->getIntegerForKey(name2.c_str(), 0);
+	/*CCLOG("SSS%d", one);
+	CCLOG("TTT%d", two);*/
+
+	score1 = score1 + one;
+	score2 = score2 + two;
+	database->setIntegerForKey(name1.c_str(), score1);
+	database->setIntegerForKey(name2.c_str(), score2);
+
+	database->flush();
+	ShareSingleton::GetInstance()->xmlPath = FileUtils::getInstance()->getWritablePath() + "UserDefault.xml";
+	//log("%s", ShareSingleton::GetInstance()->xmlPath);
+
+#pragma endregion
+
+	/*弹出游戏结束界面,  需要延迟1s*/
+	scheduleOnce(schedule_selector(ExampleGameScene::CallGameOverScene), delay);
 }
 
 /* 集气状态 */
 void ExampleGameScene::isCharge(float dt)
 {
 	if (player1->getActionByTag(12) != nullptr) {
-		player1->setMp(player1->getMp() + 5);
+		player1->setMp(player1->getMp() + 10);
+	}
+	else {
+		if (chargeEffect1 != NULL) {
+			chargeEffect1->removeFromParentAndCleanup(true);
+			chargeEffect1 = NULL;
+		}
 	}
 	if (player2->getActionByTag(12) != nullptr) {
-		player2->setMp(player2->getMp() + 5);
+		player2->setMp(player2->getMp() + 10);
+	}
+	else {
+		if (chargeEffect2 != NULL) {
+			chargeEffect2->removeFromParentAndCleanup(true);
+			chargeEffect2 = NULL;
+		}
 	}
 }
 
@@ -630,11 +1056,62 @@ void ExampleGameScene::updateHP_MP(float delay)
 	}
 }
 
+void ExampleGameScene::CallGameOverScene(float dt)
+{
+
+#pragma region 弹出结束游戏场景
+
+	/*得到窗口的大小*/
+	Size visibleSize = Director::sharedDirector()->getVisibleSize();
+	RenderTexture *renderTexture = RenderTexture::create(visibleSize.width, visibleSize.height);
+
+	/*遍历当前类的所有子节点信息，画入renderTexture中。
+	这里类似截图。*/
+	renderTexture->begin();
+	this->getParent()->visit();
+	renderTexture->end();
+
+	auto newScene = GameOverScene::CreateScene(renderTexture);
+	/*结束游戏界面，压入场景堆栈。并切换到GameOverScene界面*/
+	Director::sharedDirector()->pushScene(newScene);
+
+#pragma endregion
+}
+
 
 /* TODO:这里的对打逻辑存在一点小问题，有时候会出现两个人互打的情况； */
 void ExampleGameScene::hit(float dt)
 {
-	if (abs(player1->getPositionX() - player2->getPositionX()) < 100) {
+	if (player2->isHitted || yIsBreak == true) {
+		if (player2->getActionByTag(12) != nullptr) {
+			player2->stopActionByTag(12);
+			if (chargeEffect2 != NULL) {
+				chargeEffect2->removeFromParentAndCleanup(true);
+				chargeEffect2 = NULL;
+			}
+		}
+		yIsBreak = true;
+	}
+
+	if (player1->isHitted || fiveIsBreak == true) {
+		if (player1->getActionByTag(12) != nullptr) {
+			player1->stopActionByTag(12);
+			if (chargeEffect1 != NULL) {
+				chargeEffect1->removeFromParentAndCleanup(true);
+				chargeEffect1 = NULL;
+			}
+		}
+		fiveIsBreak = true;
+	}
+	/* 因为弗利萨尾巴太长，所以判定距离的方法得区别开来 */
+	bool flag = false;
+	if (isFreiza) {
+		flag = abs(physicPlayer1->getPositionX() - physicPlayer2->getPositionX()) < physicPlayer1->getContentSize().width + physicPlayer2->getContentSize().width - 50;
+	}
+	else {
+		flag = abs(physicPlayer1->getPositionX() - physicPlayer2->getPositionX()) < physicPlayer1->getContentSize().width + physicPlayer2->getContentSize().width - 10;
+	}
+	if (flag) {
 		bool player1FirstAttack = false,bothIdle = false;
 		if (player1->isHitting && player2->isHitting) {
 			player1FirstAttack = player1LastHit > player2LastHit;
@@ -682,10 +1159,14 @@ void ExampleGameScene::hit(float dt)
 			player1RangedBalls.remove(ball);
 			break;
 		}
-		else if (abs(player2->getPositionX() - ball->getPositionX()) < 80 && player2->getPositionY() < 120) {
+		else if (abs(player2->getPositionX() - ball->getPositionX()) < 40 && player2->getPositionY() < 120) {
 			player2->setFlippedX(!player1->isFlippedX());
 			if (player2->isHitted == false) {
 				shareInstance->opponentFlipx = player1->isFlippedX();
+				if (chargeEffect2 != NULL) {
+					chargeEffect2->removeFromParentAndCleanup(true);
+					chargeEffect2 = NULL;
+				}
 				createHitEffect(player2);
 			}
 			player2->hit();
@@ -701,10 +1182,17 @@ void ExampleGameScene::hit(float dt)
 			player2RangedBalls.remove(ball);
 			break;
 		}
-		else if (abs(player1->getPositionX() - ball->getPositionX()) < 80 && player1->getPositionY() < 120) {
+		else if (abs(player1->getPositionX() - ball->getPositionX()) < 40 && player1->getPositionY() < 120) {
 			player1->setFlippedX(!player2->isFlippedX());
 			if (player1->isHitted == false) {
 				shareInstance->opponentFlipx = player2->isFlippedX();
+				if (player1->getActionByTag(12) != nullptr) {
+					player1->stopActionByTag(12);
+					if (chargeEffect1 != NULL) {
+						chargeEffect1->removeFromParentAndCleanup(true);
+						chargeEffect1 = NULL;
+					}
+				}
 				createHitEffect(player1);
 			}
 			player1->hit();
@@ -716,21 +1204,50 @@ void ExampleGameScene::hit(float dt)
 
 #pragma endregion
 
+#pragma region 两球相撞动画
+	bool end = false;
+	for (Sprite* ball2 : player2RangedBalls) {
+		for (Sprite* ball1 : player1RangedBalls) {
+			if (abs(ball2->getPositionX() - ball1->getPositionX()) < 15) {
+				auto explore_animation = Animation::createWithSpriteFrames(explore, 0.1f);
+				AnimationCache::getInstance()->addAnimation(explore_animation, "exploreAnimation");
+				auto exploreAnimation = Animate::create(AnimationCache::getInstance()->getAnimation("exploreAnimation"));
+				SimpleAudioEngine::getInstance()->playEffect("music/explore.wav", false);
+
+				Sprite* temp2 = ball2;
+				// 先从队列中移除
+				ball2->setPosition(Vec2(ball2->getPosition().x + 15, ball2->getPosition().y));
+				ball2->stopAllActions();
+				ball2->runAction(
+					Sequence::create(
+						exploreAnimation
+						, CallFunc::create([temp2, this] {
+					temp2->removeFromParentAndCleanup(true);
+					player2RangedBalls.remove(temp2);
+				})
+						, nullptr
+					)
+				);
+
+				/*ball2->removeFromParentAndCleanup(true);
+				player2RangedBalls.remove(ball2);*/
+				ball1->removeFromParentAndCleanup(true);
+				player1RangedBalls.remove(ball1);
+				end = true;
+				break;
+			}
+		}
+		if (end) {
+			break;
+		}
+	}
+#pragma endregion
 }
 
 /* 点击按钮发生被打状态，仅用于测试代码 */
 void ExampleGameScene::hitTest(Ref* sender)
 {
-	if (!player1->isDouble) {
-		player1->hittedCount = 0;
-		scheduleOnce(schedule_selector(ExampleGameScene::hittedCounter), 2.0f);
-		player1->isDouble = true;
-	}
-	else {
-		player1->hittedCount++;
-	}
-	player1->hit();
-	createHitEffect(player1);
+	player2->win();
 }
 
 
@@ -926,6 +1443,7 @@ void ExampleGameScene::createUltimateBall(PlayerSprite* player, bool isPlayer1) 
 		auto seq = Sequence::create(explose, CallFuncN::create([explosion](Ref* sender) {
 			explosion->removeFromParentAndCleanup(true);
 		}), NULL);
+		/* 这里判断是否被大招击中  */
 		if (Ball->getBoundingBox().containsPoint(opponent->getPosition())) {
 			opponent->hitByUltimate();
 		}
@@ -1004,20 +1522,21 @@ void ExampleGameScene::VoicePauseSelectedCallback(Ref * pSender)
 		SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 		SimpleAudioEngine::getInstance()->pauseAllEffects();
 		voiceState = 0;
-		voiceItem->setNormalImage(Sprite::create("button/SoundOff.png"));
+		voiceItem->setNormalImage(Sprite::create("button/SoundOn.png"));
 	}
 	else {
 		SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 		SimpleAudioEngine::getInstance()->resumeAllEffects();
 		voiceState = 1;
 		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
-		voiceItem->setNormalImage(Sprite::create("button/SoundOn.png"));	
+		voiceItem->setNormalImage(Sprite::create("button/SoundOff.png"));	
 	}
 }
 
 /*游戏暂停，弹出暂停场景的回调函数*/
 void ExampleGameScene::playOrPauseCallback(Object * pSender)
 {
+
 	/*得到窗口的大小*/
 	Size visibleSize = Director::sharedDirector()->getVisibleSize();
 	RenderTexture *renderTexture = RenderTexture::create(visibleSize.width, visibleSize.height);
@@ -1027,6 +1546,8 @@ void ExampleGameScene::playOrPauseCallback(Object * pSender)
 	renderTexture->begin();
 	this->getParent()->visit();
 	renderTexture->end();
+	float t = 0.5;
+	auto replacesense = CCTransitionFade::create(t, GamePauseScene::CreateScene(renderTexture));
 
 	/*将游戏界面暂停，压入场景堆栈。并切换到GamePauseScene界面*/
 	Director::sharedDirector()->pushScene(GamePauseScene::CreateScene(renderTexture));
@@ -1037,7 +1558,7 @@ void ExampleGameScene::playOrPauseCallback(Object * pSender)
 	if (playOrPauseState) {
 		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 		playOrPauseState = 0;
-		//Director::getInstance()->set
+		ShareSingleton::GetInstance()->controlPause = false;
 		playOrPauseItem->setNormalImage(Sprite::create("button/pause.png"));
 	}
 	else {
@@ -1045,4 +1566,19 @@ void ExampleGameScene::playOrPauseCallback(Object * pSender)
 		playOrPauseState = 1;
 		playOrPauseItem->setNormalImage(Sprite::create("button/play.png"));
 	}
+}
+
+void ExampleGameScene::explosion()
+{
+	auto texture = Director::getInstance()->getTextureCache()->addImage("explosion.png");
+	explore.reserve(8);
+	for (int i = 0; i < 5; i++) {
+		auto frame = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(191 * i, 0, 191, 192)));
+		explore.pushBack(frame);
+	}
+	for (int i = 0; i < 2; i++) {
+		auto frame = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(191 * i, 192, 191, 192)));
+	}
+	auto explore_animation = Animation::createWithSpriteFrames(explore, 0.1f);
+	AnimationCache::getInstance()->addAnimation(explore_animation, "exploreAnimation");
 }

@@ -37,7 +37,6 @@ public:
 
 private:
 	SocketServer* server;
-	bool player1 = true;
 };
 
 #endif /* __SOCKETSERVER_SCENE_H__*/

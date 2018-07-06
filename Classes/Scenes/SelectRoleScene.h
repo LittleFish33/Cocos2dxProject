@@ -54,6 +54,8 @@ private:
 	/* 已经被选择的角色 */
 	int alreadySelected = 0;
 
+	std::string player1Name, player2Name;
+
 };
 
 #endif

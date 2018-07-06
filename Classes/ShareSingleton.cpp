@@ -7,6 +7,7 @@ public:
 
 	bool opponentFlipx = false;
 	int selectedBackground = 1;
+	bool controlVoice = true;
 
 	static ShareSingleton* GetInstance()
 	{
