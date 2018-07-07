@@ -30,7 +30,12 @@ public:
     
 	void settingGameCallback(Ref* pSender);
 
-	
+	void rankListCallback(Ref* pSender);
+
+	void onlineCallback(Ref* pSender);
+
+	void operatingInstructionSceneCallback(Ref* pSender);
+
 	/* implement the "static create()" method manually */
     CREATE_FUNC(WelcomeScene);
 };

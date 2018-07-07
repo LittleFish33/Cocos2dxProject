@@ -41,7 +41,7 @@ bool GamePauseScene::init()
 #pragma endregion
 
 #pragma region  ÓÎÏ·ÔİÍ£±êÇ©
-	auto GamePauseImage = CCMenuItemImage::create("button/GamePause.png", "button/GamePause/png");
+	auto GamePauseImage = CCMenuItemImage::create("label/GamePause.png", "button/GamePause/png");
 	GamePauseImage->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2 + 150));
 
 #pragma endregion
@@ -108,7 +108,6 @@ void GamePauseScene::ReturnToMenuSceneCallback(Object * pSender)
 {
 	if (ShareSingleton::GetInstance()->controlVoice)
 		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
-
 	float t = 1.0f;
 	auto newScene = WelcomeScene::createScene();
 	auto replacesense = TransitionFade::create(t, newScene);
@@ -120,7 +119,6 @@ void GamePauseScene::QuiteGameCallback(Object * pSender)
 {
 	if (ShareSingleton::GetInstance()->controlVoice)
 		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
-
 	Director::sharedDirector()->end();
 }
 

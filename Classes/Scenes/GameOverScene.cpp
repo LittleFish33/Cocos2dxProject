@@ -43,7 +43,7 @@ bool GameOverScene::init()
 #pragma endregion
 
 #pragma region  ÓÎÏ·½áÊø±êÇ©
-	auto GameOverImage = CCMenuItemImage::create("button/GameOver.png", "button/GameOver/png");
+	auto GameOverImage = CCMenuItemImage::create("label/GameOver.png", "button/GameOver/png");
 	GameOverImage->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2 + 150));
 
 #pragma endregion

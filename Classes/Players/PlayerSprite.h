@@ -68,11 +68,13 @@ public:
 
 #pragma region 用于判断当前角色的状态
 
+	bool ishitByUltimate = false;
 	bool isRun = false;
 	bool stopJump = true, stopMeleeAttack = true, stopRangedAttack = true;
 	bool isHitted = false, isHitting = false, isUltimate = false;
 	bool isDead = false, isWin = false;
 	bool isMove = false;
+	bool isDefend = false;
 	int hittedCount = 0;
 	/*被连击的判断变量*/
 	bool isDouble = false;

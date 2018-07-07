@@ -1,6 +1,9 @@
 #include "AppDelegate.h"
 #include "Scenes/WelcomeScene.h"
 #include "Scenes/ExampleGameScene.h"
+#include "Scenes/OnlineGameScene.h"
+#include "Scenes/SocketServerScene.h"
+#include "Scenes/InputNameScene.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -96,7 +99,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // create a scene. it's an autorelease object
     auto scene = WelcomeScene::createScene();
-
+	//auto scene = SocketServerScene::createScene();
+	//auto scene = ExampleGameScene::createScene();
+	
     // run
     director->runWithScene(scene);
 

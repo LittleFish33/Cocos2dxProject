@@ -48,7 +48,7 @@ public:
 	void hit(float dt);
 	void gameOver();
 	void isCharge(float dt); /* 是否集气 */
-	void updateHP_MP(float delay); /*判断 mp hp的变化*/
+	void updateHP_MP(float delay);/*判断 mp hp的变化*/
 
 	/*在游戏结束时，利用一次性监听器，延迟切换*/
 	void CallGameOverScene(float dt);
@@ -128,9 +128,15 @@ private:
 	bool firstPressA = true, firstPressD = true, A_KeyState = false, D_KeyState = false;
 	bool firstPress1 = true, secondPress1 = false;
 	bool firstPressG = true, secondPressG = false;
+	/* 一直跳跃与防守设置 */
+	bool W_KeyState = false, UPKeyState = false;
+	bool S_KeyState = false, DOWNKeyState = false;
+	bool FIVEKeyState = false, Y_KeyState = false;
 	/*攻击炮的列表*/
 	std::list<Sprite*> player1UltimateBalls, player2UltimateBalls;
 	std::list<Sprite*> player1RangedBalls, player2RangedBalls;
+	/* 弗利萨因为他的尾巴太长，有一些麻烦的东西和其他人不同 */
+	bool isFreiza = false;
 
 	__int64 player1LastHit, player2LastHit;
 	ShareSingleton* shareInstance = ShareSingleton::GetInstance();
@@ -141,6 +147,8 @@ private:
 	/*为真 正在游戏，为假暂停*/
 	int playOrPauseState;
 	MenuItemImage* playOrPauseItem;
+
+	
 };
 
 #endif /* __GameScene_SCENE_H__ */

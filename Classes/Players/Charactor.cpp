@@ -33,41 +33,10 @@ Charactor::Charactor(string _name) {
 		deadNum = 5;
 		winNum = 7;
 		hittedAwayNum = 8;
-		dashNum = 4;
+		dashNum = 5;
 		defendNum = 1;
 		chargeNum = 4;
 		ultimateNum = 10;
-
-		ultimateBallNum = 4;
-		ultimateBallBegin = 11;
-		ultimateBallEnd = 14;//大招
-		chargeEffectNum = 11;
-		chargeEffectBegin = 0;
-		chargeEffectEnd = 10;//蓄力
-		rangedBallNumber = 30;//远程攻击
-		explosionNum = 17;
-		explosionBegin = 31;
-		explosionEnd = 47;//爆炸
-		hitEffectNum = 8;
-		hitEffectBegin = 53;
-		hitEffectEnd = 60;//被击打特效
-	}
-	else if (name == "Vegeta"){
-		idleNum = 4;
-		runNum = 6;
-		meleeAttack1Num = 5;
-		meleeAttack2Num = 12;
-		meleeAttack3Num = 17;
-		rangedAttackNum = 5;
-		jumpNum = 7;
-		hitNum = 2;
-		deadNum = 5;
-		winNum = 6;
-		hittedAwayNum = 2;  //
-		dashNum = 4;   //
-		defendNum = 1;
-		chargeNum = 4;
-		ultimateNum = 7;
 
 		ultimateBallNum = 4;
 		ultimateBallBegin = 11;
@@ -145,7 +114,37 @@ Charactor::Charactor(string _name) {
 		hitEffectBegin = 53;
 		hitEffectEnd = 60;//被击打特效
 	}
+	else if (name == "Vegeta") {
+		idleNum = 4;
+		runNum = 6;
+		meleeAttack1Num = 5;
+		meleeAttack2Num = 12;
+		meleeAttack3Num = 17;
+		rangedAttackNum = 5;
+		jumpNum = 7;
+		hitNum = 2;
+		deadNum = 5;
+		winNum = 6;
+		hittedAwayNum = 2;  //
+		dashNum = 4;   //
+		defendNum = 1;
+		chargeNum = 4;
+		ultimateNum = 7;
 
+		ultimateBallNum = 4;
+		ultimateBallBegin = 11;
+		ultimateBallEnd = 14;//大招
+		chargeEffectNum = 11;
+		chargeEffectBegin = 0;
+		chargeEffectEnd = 10;//蓄力
+		rangedBallNumber = 30;//远程攻击
+		explosionNum = 17;
+		explosionBegin = 31;
+		explosionEnd = 47;//爆炸
+		hitEffectNum = 8;
+		hitEffectBegin = 53;
+		hitEffectEnd = 60;//被击打特效
+	}
 
 	rangedBallStr = name + "_boom_" + std::to_string(rangedBallNumber) + ".png";
 }

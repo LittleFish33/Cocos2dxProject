@@ -2,6 +2,7 @@
 #include "SimpleAudioEngine.h"
 #include "GameSettingScene.h"
 #include "../ShareSingleton.h"
+#include "GamePauseScene.h"
 #include <tinyxml2/tinyxml2.h>
 //#include <json/document.h>
 using namespace tinyxml2;
@@ -33,6 +34,7 @@ bool RankListScene::init()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 #pragma endregion
+	CCLOG(ShareSingleton::GetInstance()->xmlPath.c_str());
 
 #pragma region 排行榜前5名
 	handleRankList();
@@ -59,7 +61,20 @@ bool RankListScene::init()
 	audio->preloadEffect("music/ClickCamera.wav");
 	audio->setEffectsVolume(0.80);
 
+	/*返回菜单按钮*/
+	auto ReturnToMenuSceneItem = CCMenuItemImage::create(
+		"button/back2-normal.png",
+		"button/back2-selected.png",
+		this,
+		menu_selector(GamePauseScene::ReturnToMenuSceneCallback)
+	);
+	ReturnToMenuSceneItem->setPosition(Vec2(visibleSize.width / 2, 80));
+
+	Menu* pMenu = Menu::create(ReturnToMenuSceneItem, NULL);
+	pMenu->setPosition(Vec2::ZERO);
+	this->addChild(pMenu, 2);
 #pragma endregion
+	CCLOG(ShareSingleton::GetInstance()->xmlPath.c_str());
     return true;
 }
 
@@ -106,9 +121,9 @@ void RankListScene::handleRankList()
 		string str1 = cStr2;
 		string str = str1 + ". " + temp.first+ ": " + cStr;
 
-		Label* rank = Label::createWithTTF(str.c_str(), "fonts/comicsansms.ttf", 60);
+		Label* rank = Label::createWithTTF(str.c_str(), "fonts/comicsansms.ttf", 30);
 		rank->setPosition(visibleSize.width / 2, visibleSize.height - 80 * (x + 3.5));
-		rank->setColor(Color3B(0, 255, 0));
+		rank->setColor(Color3B(255, 255, 255));
 		ranks.push_back(rank);
 		addChild(rank, 1);
 	}

@@ -2,6 +2,7 @@
 #include "SimpleAudioEngine.h"
 #include "ExampleGameScene.h"
 #include "../ShareSingleton.h"
+#include "InputNameScene.h"
 using namespace CocosDenshion;
 
 Scene* SelectBackgroundScene::createScene()
@@ -92,17 +93,17 @@ bool SelectBackgroundScene::init()
 
 	/* 确定按钮 */
 	confirmItem = MenuItemImage::create(
-		"confirm-normal.png",
-		"confirm-selected.png",
+		"button/confirm-normal.png",
+		"button/confirm-selected.png",
 		CC_CALLBACK_1(SelectBackgroundScene::startGame, this));
 	confirmItem->setPosition(Vec2(512, 130));
 
 	/*选择地图字样*/
-	auto chooseBg = Sprite::create("button/ChooseBackground.png");
+	auto chooseBg = Sprite::create("label/ChooseBackground.png");
 	chooseBg->setPosition(Vec2(512, 680));
 	this->addChild(chooseBg, 0);
 
-	auto menu = Menu::create(bgItem1, bgItem2, bgItem3, bgItem4, bgItem5, bgItem6, bgItem7, bgItem8,confirmItem,  NULL);
+	auto menu = Menu::create(bgItem1, bgItem2, bgItem3, bgItem4, bgItem5, bgItem6, bgItem7, bgItem8, confirmItem,  NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
 
@@ -170,7 +171,7 @@ void SelectBackgroundScene::startGame(Ref * pSender)
 	if (ShareSingleton::GetInstance()->controlVoice)
 		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 	ShareSingleton::GetInstance()->selectedBackground = this->selectedBackground;
-	auto newScene = ExampleGameScene::createScene();
+	auto newScene = InputNameScene::createScene();
 	auto replacesense = CCTransitionFade::create(t, newScene);
 	Director::sharedDirector()->replaceScene(replacesense);
 

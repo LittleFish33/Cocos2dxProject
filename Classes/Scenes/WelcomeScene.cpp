@@ -2,6 +2,9 @@
 #include "SimpleAudioEngine.h"
 #include "GameSettingScene.h"
 #include "ShareSingleton.h"
+#include "OnlineGameScene.h"
+#include "RankListScene.h"
+#include "OperatingInstructionScene.h"
 using namespace CocosDenshion;
 USING_NS_CC;
 
@@ -56,7 +59,7 @@ bool WelcomeScene::init()
 
 	auto audio = SimpleAudioEngine::getInstance();
 	/*预加载并循环播放背景音乐*/
-	if(ShareSingleton::GetInstance()->controlVoice)
+	if (ShareSingleton::GetInstance()->controlVoice)
 		audio->playBackgroundMusic("music/WelcomeSceneBgm.mp3", true);
 	audio->setBackgroundMusicVolume(0.80);
 
@@ -75,7 +78,7 @@ bool WelcomeScene::init()
 		CC_CALLBACK_1(WelcomeScene::startGameCallback, this));
 
 	//startItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 + 20));
-	startItem->setPosition(Vec2(800, 300));
+	startItem->setPosition(Vec2(500, 250));
 	
 #pragma endregion
 
@@ -87,7 +90,19 @@ bool WelcomeScene::init()
 		CC_CALLBACK_1(WelcomeScene::settingGameCallback, this)
 	);
 	//settingItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 60));
-	settingItem->setPosition(Vec2(800, 210));
+	settingItem->setPosition(Vec2(800, 250));
+
+#pragma endregion
+
+
+#pragma region   进入游戏操作场景按钮
+
+	auto operatingInstructionItem = MenuItemImage::create(
+		"button/operating-normal.png",
+		"button/operating-selected.png",
+		CC_CALLBACK_1(WelcomeScene::operatingInstructionSceneCallback, this));
+
+		operatingInstructionItem->setPosition(Vec2(500, 80));
 
 #pragma endregion
 
@@ -98,12 +113,36 @@ bool WelcomeScene::init()
 		"button/close-selected.png",
 		CC_CALLBACK_1(WelcomeScene::menuCloseCallback, this));
 
-	closeItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 140));
-	closeItem->setPosition(Vec2(800, 120));
+	//closeItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 140));
+	closeItem->setPosition(Vec2(800, 80));
 
 #pragma endregion
 
-	auto menu = Menu::create(startItem, closeItem, settingItem,  NULL);
+#pragma region 排行榜按钮
+
+	auto rankListItem = MenuItemImage::create(
+		"button/ranklist-normal.png",
+		"button/ranklist-selected.png",
+		CC_CALLBACK_1(WelcomeScene::rankListCallback, this));
+
+	//rankListItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 200));
+	rankListItem->setPosition(Vec2(800, 170));
+
+#pragma endregion
+
+#pragma region 联网按钮
+
+	auto onlineItem = MenuItemImage::create(
+		"button/online-normal.png",
+		"button/online-selected.png",
+		CC_CALLBACK_1(WelcomeScene::onlineCallback, this));
+
+	//rankListItem->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 3 - 200));
+	onlineItem->setPosition(Vec2(500, 170));
+
+#pragma endregion
+
+	auto menu = Menu::create(startItem, closeItem, settingItem, rankListItem, onlineItem, operatingInstructionItem, NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
     return true;
@@ -142,6 +181,32 @@ void WelcomeScene::settingGameCallback(Ref * pSender)
 	auto replacescene = CCTransitionFade::create(t, newScene);
 	Director::sharedDirector()->replaceScene(replacescene);
 
+}
+
+/* 排行榜调用函数 */
+void WelcomeScene::rankListCallback(Ref * pSender)
+{
+	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+
+	float t = 0.8f;
+	auto newScene = RankListScene::createScene();
+	auto replacescene = CCTransitionFade::create(t, newScene);
+	Director::sharedDirector()->replaceScene(replacescene);
+}
+
+void WelcomeScene::onlineCallback(Ref* pSender) {
+	float t = 0.8f;
+	auto newScene = OnlineGameScene::createScene();
+	auto replacescene = CCTransitionFade::create(t, newScene);
+	Director::sharedDirector()->replaceScene(replacescene);
+}
+
+void WelcomeScene::operatingInstructionSceneCallback(Ref * pSender)
+{
+	float t = 0.8f;
+	auto newScene = OperatingInstructionScene::createScene();
+	auto replacescene = CCTransitionFade::create(t, newScene);
+	Director::sharedDirector()->replaceScene(replacescene);
 }
 
 

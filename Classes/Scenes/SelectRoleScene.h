@@ -53,11 +53,12 @@ private:
 	Sprite *p1Sprite, *p2Sprite;
 	/* 已经被选择的角色 */
 	int alreadySelected = 0;
-	
 
-	//////////////////////////////////////////////////////////  qiuyihao
 	std::string player1Name, player2Name;
 
+	/*提示游戏角色已选中*/
+	Sprite* role1Selected;
+	Sprite* role2Selected;
 };
 
 #endif

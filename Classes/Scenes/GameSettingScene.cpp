@@ -120,6 +120,8 @@ void GameSettingScene::controlVoiceCallback(Ref * pSender)
 	if (ShareSingleton::GetInstance()->controlVoice)
 		SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
 
+	SimpleAudioEngine::getInstance()->playEffect("music/ClickCamera.wav", false, 1.0f, 0.0f, 1.0f);
+
 	auto audio = SimpleAudioEngine::getInstance();
 	/*即将关闭背景音乐*/
 	if (openOrCloseVoiceState) {
@@ -141,7 +143,8 @@ void GameSettingScene::controlVoiceCallback(Ref * pSender)
 		/*预加载并循环播放背景音乐*/
 		SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 		SimpleAudioEngine::getInstance()->resumeAllEffects();
-		ShareSingleton::GetInstance()->controlVoice = true;  //修改全局变量，以便页面间声音控制保持一致 
+		ShareSingleton::GetInstance()->controlVoice = true;  //修改全局变量，以便页面间声音控制保持一致
+
 		bgmItem->setNormalImage(Sprite::create("setting/closeBgm-normal.png"));
 		bgmItem->setSelectedImage(Sprite::create("setting/closeBgm-selected.png"));
 

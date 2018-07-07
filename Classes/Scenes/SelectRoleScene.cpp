@@ -7,7 +7,6 @@
 
 using namespace CocosDenshion;
 
-/*本文件做了图片路径的一些修改，以及记录了选择角色的名字string，并加入共享单例类 -- by qyh */
 
 Scene* SelectRoleScene::createScene()
 {
@@ -37,7 +36,9 @@ bool SelectRoleScene::init()
 
 #pragma region UI界面
 
-	
+	/* Todo：美工人员请将这里的图片替换为你选的素材和按你的需要设置位置 */
+	/* 这里的角色的变量名仅仅是为了基本框架的构建，请在选好角色之后替换这些变量名 */
+	/*游戏背景*/
 	auto bg = Sprite::create("bg/selectRoleSceneBackground.png");
 	bg->setPosition(visibleSize / 2);
 	addChild(bg, 0);
@@ -72,14 +73,14 @@ bool SelectRoleScene::init()
 		"button/confirm-normal.png",
 		"button/confirm-selected.png",
 		CC_CALLBACK_1(SelectRoleScene::confirmCallback, this, '1'));
-	player1ConfirmItem->setPosition(Vec2(150, 100));
+	player1ConfirmItem->setPosition(Vec2(850, 100));
 	player1ConfirmItem->setVisible(false);
 
 	player2ConfirmItem = MenuItemImage::create(
 		"button/confirm-normal.png",
 		"button/confirm-selected.png",
 		CC_CALLBACK_1(SelectRoleScene::confirmCallback, this, '2'));
-	player2ConfirmItem->setPosition(Vec2(850, 100));
+	player2ConfirmItem->setPosition(Vec2(150, 100));
 	player2ConfirmItem->setVisible(false);
 
 	/* 回到主菜单按纽 */
@@ -90,7 +91,7 @@ bool SelectRoleScene::init()
 	backItem->setPosition(Vec2(500, 100));
 
 	/*x选择角色字样*/
-	auto chooseRole = Sprite::create("button/ChooseRole.png");
+	auto chooseRole = Sprite::create("label/ChooseRole.png");
 	chooseRole->setPosition(Vec2(512, 680));
 	this->addChild(chooseRole, 0);
 
@@ -101,12 +102,21 @@ bool SelectRoleScene::init()
 	/*表明是角色1,2的图片*/
 	auto role1 = Sprite::create("role/role-1.png");
 	auto role2 = Sprite::create("role/role-2.png");
-	role1->setPosition(Vec2(150, 500));
-	role2->setPosition(Vec2(850, 500));
+	role1->setPosition(Vec2(850, 500));
+	role2->setPosition(Vec2(150, 500));
 	addChild(role1, 1);
 	addChild(role2, 1);
 
+	/* 等游戏角色确定后 弹出提示选中*/
+    role1Selected = Sprite::create("role/roleSelected.png");
+	role1Selected->setPosition(Vec2(850, 300));
+	role1Selected->setVisible(false);
+	this->addChild(role1Selected, 2);
 	
+    role2Selected = Sprite::create("role/roleSelected.png");
+	role2Selected->setPosition(Vec2(150, 300));
+	role2Selected->setVisible(false);
+	this->addChild(role2Selected, 2);
 
 	/* 当你选择了一个角色之后，将会显示出该角色的大图在左下角或右下角，在此之前该图片是不可见的 */
 	/* 已选角色1 */
@@ -132,13 +142,13 @@ bool SelectRoleScene::init()
 
 	/* P1标签和P2标签：在未选中状态是不可见的 */
 	p1Sprite = Sprite::create("role/p1.png");
-	p1Sprite->setPosition(Vec2(400, 500));
+	p1Sprite->setPosition(Vec2(0, 0));
 	p1Sprite->setOpacity(200);
 	p1Sprite->setVisible(false);
 	this->addChild(p1Sprite, 2);
 
 	p2Sprite = Sprite::create("role/p2.png");
-	p2Sprite->setPosition(Vec2(0, 0));
+	p2Sprite->setPosition(Vec2(400, 500));
 	p2Sprite->setOpacity(200);
 	p2Sprite->setVisible(false);
 	this->addChild(p2Sprite, 2);
@@ -177,12 +187,12 @@ void SelectRoleScene::roleSelectedCallback(Ref* pSender, char option)
 		{
 		case '1':
 			p1Sprite->setPosition(400, 500);	/* 设置p1标签的位置 */
-			roleItem1_big->setPosition(150, 300); /* 设置所选角色的大图的位置 */
+			roleItem1_big->setPosition(850, 300); /* 设置所选角色的大图的位置 */
 			roleItem1_big->setVisible(true);
 			roleItem2_big->setVisible(false);
 			roleItem3_big->setVisible(false);
 			roleItem4_big->setVisible(false);
-			
+
 			/////////////////////////////////////////////// qiuyihao
 			player1Name = "Goku";    /*记录选择的角色名*/
 
@@ -190,19 +200,18 @@ void SelectRoleScene::roleSelectedCallback(Ref* pSender, char option)
 			break;
 		case '2':
 			p1Sprite->setPosition(600, 500);
-			roleItem2_big->setPosition(150, 300);
+			roleItem2_big->setPosition(850, 300);
 			roleItem1_big->setVisible(false);
 			roleItem2_big->setVisible(true);
 			roleItem3_big->setVisible(false);
 			roleItem4_big->setVisible(false);
 
 			player1Name = "Vegeta";
-
 			alreadySelected = 2;
 			break;
 		case '3':
 			p1Sprite->setPosition(400, 300);
-			roleItem3_big->setPosition(150, 300);
+			roleItem3_big->setPosition(850, 300);
 			roleItem1_big->setVisible(false);
 			roleItem2_big->setVisible(false);
 			roleItem3_big->setVisible(true);
@@ -214,7 +223,7 @@ void SelectRoleScene::roleSelectedCallback(Ref* pSender, char option)
 			break;
 		case '4':
 			p1Sprite->setPosition(600, 300);
-			roleItem4_big->setPosition(150, 300);
+			roleItem4_big->setPosition(850, 300);
 			roleItem1_big->setVisible(false);
 			roleItem2_big->setVisible(false);
 			roleItem3_big->setVisible(false);
@@ -239,29 +248,25 @@ void SelectRoleScene::roleSelectedCallback(Ref* pSender, char option)
 		{
 		case '1':
 			p2Sprite->setPosition(400, 500);  /* 设置p2标签的位置 */
-			roleItem1_big->setPosition(850, 300); /* 设置所选角色的大图的位置 */
+			roleItem1_big->setPosition(150, 300); /* 设置所选角色的大图的位置 */
 			roleItem1_big->setVisible(true);
-			
 			player2Name = "Goku";
-
 			break;
 		case '2':
 			p2Sprite->setPosition(600, 500);
-			roleItem2_big->setPosition(850, 300);
-			player2Name = "Vegeta";
-
+			roleItem2_big->setPosition(150, 300);
 			roleItem2_big->setVisible(true);
+			player2Name = "Vegeta";
 			break;
 		case '3':
 			p2Sprite->setPosition(400, 300);
-			roleItem3_big->setPosition(850, 300);
+			roleItem3_big->setPosition(150, 300);
 			roleItem3_big->setVisible(true);
 			player2Name = "Kid_Buu";
-
 			break;
 		case '4':
 			p2Sprite->setPosition(600, 300);
-			roleItem4_big->setPosition(850, 300);
+			roleItem4_big->setPosition(150, 300);
 			roleItem4_big->setVisible(true);
 			player2Name = "Frieza";
 			break;
@@ -322,12 +327,15 @@ void SelectRoleScene::confirmCallback(Ref* pSender, char option)
 	{
 	case '1':
 		player1Selected = true;
+		role1Selected->setVisible(true);
 		return;
 	case '2':
+		role2Selected->setVisible(true);
 		break;
 	default:
 		return;
 	}
+
 
 	/*将选择好的角色名传入共享单例ShareSingleton */
 	ShareSingleton::GetInstance()->player1 = player1Name;
